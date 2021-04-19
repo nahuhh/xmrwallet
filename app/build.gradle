@@ -7,8 +7,8 @@ android {
         applicationId "com.m2049r.wowwallet"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 100101
-        versionName "2.0.1.1 'Puginarug'"
+        versionCode 100102
+        versionName "2.0.1.2 'Puginarug'"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
