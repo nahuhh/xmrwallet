@@ -1,8 +1,8 @@
-# MonerujoAE
-The Android AEON Wallet
+# MonerujoWOW
+The Android WOW Wallet
 
 ### QUICKSTART
-- Download the APK for the most current release [here](https://gitlab.com/monerujo-io/wowwallet) and install it
+- Download the APK for the most current release [here](https://gitlab.com/monerujo-io/wowwallet/-/releases) and install it
 - Run the App and select "Generate Wallet" to create a new wallet or recover a wallet
 - See the [FAQ](doc/FAQ.md)
 
@@ -10,12 +10,11 @@ The Android AEON Wallet
 Help us translate Monerujo! You can find instructions [On Taiga](https://taiga.getmonero.org/project/erciccione-monero-localization/wiki/monerujo), and if you need help/support, open an issue or contact the Localization Workgroup. You can find us on the freenode channel `#monero-translations`, also relayed on [MatterMost](https://mattermost.getmonero.org/monero/channels/monero-translations), and matrix/riot.
 
 ### Disclaimer
-You may lose all your AEON if you use this App.
+You may lose all your WOW if you use this App. Always make sure to have your seed words safe.
 
 ### HOW TO BUILD
 Check out [the instructions](doc/BUILDING-external-libs.md)
 
 ### Donations
-- WOW: Wo4g66NnQsd2XvoLjn9RATRK6QS4w1UXmZrQJwRKn8HX9kqNpoAMbqKi9JmQMz5pMbRdW6Zahjcu57JXcYWk4zVk2w47gu6Dq
-- XMR: 4AdkPJoxn7JCvAby9szgnt93MSEwdnxdhaASxbTBm6x5dCwmsDep2UYN4FhStDn5i11nsJbpU7oj59ahg8gXb1Mg3viqCuk
-- AEON: WmsfCJfmd6QQ84Rfb2mD1y7ryBzvTiQ8MMngmgRjxDMCCkeuChA9B9ZRNZyQyjgH1zdQMBXeQB9vZhUwPHmLGhyo2nMoE2ARv
+- WOW: Wo4g66NnQsd2XvoLjn9RATRK6QS4w1UXmZrQJwRKn8HX9kqNpoAMbqKi9JmQMz5pMbRdW6Zahjcu57JXcYWk4zVk2w47gu6Dq (OpenAlias: monerujo.io)
+- XMR: 4AdkPJoxn7JCvAby9szgnt93MSEwdnxdhaASxbTBm6x5dCwmsDep2UYN4FhStDn5i11nsJbpU7oj59ahg8gXb1Mg3viqCuk (OpenAlias: monerujo.io)

@@ -80,10 +80,10 @@ public class Helper {
     static public final String NOCRAZYPASS_FLAGFILE = ".nocrazypass";
 
     static public final String BASE_CRYPTO = Crypto.XMR.getSymbol();
+    static public final int XMR_DECIMALS = 11;
 
     static public final boolean SHOW_EXCHANGERATES = false;
     static public final boolean ALLOW_SHIFT = false;
-    static public final int XMR_DECIMALS = 11;
 
     static private final String WALLET_DIR = "wallets";
     static private final String MONERO_DIR = "monero";
