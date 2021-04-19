@@ -21,9 +21,19 @@ import lombok.Getter;
 
 @AllArgsConstructor
 public enum DefaultNodes {
-    SUCHWOW("node.suchwow.xyz:34568"),
+// from https://git.wownero.com/wownero/wowlet-backend/src/branch/master/data/nodes.json#L8-L19
+    WOWNODES("global.wownodes.com:34568"),
+    SUPERFAST("super.fast.node.xmr.pm:34568"),
     WOWCLUB("node.wownero.club:34568"),
-    FYI("wownero.fyi:34568");
+    SUCHWOW("node.suchwow.xyz:34568"),
+    EUWOW1("eu-west-1.wow.xmr.pm:34568"),
+    EUWOW2("eu-west-2.wow.xmr.pm:34568"),
+    EUWOW3("eu-west-3.wow.xmr.pm:34568"),
+    EUWOW4("eu-west-4.wow.xmr.pm:34568"),
+    EUWOW5("eu-west-5.wow.xmr.pm:34568"),
+    EUWOW6("eu-west-6.wow.xmr.pm:34568"),
+    NAWOW1("na-west-1.wow.xmr.pm:34568"),
+    PWNED("wow.pwned.systems:34568");
 
     @Getter
     private final String uri;
