@@ -81,8 +81,9 @@ public class Helper {
 
     static public final String BASE_CRYPTO = Crypto.XMR.getSymbol();
 
-    static public final boolean SHOW_EXCHANGERATES = true;
-    static public final boolean ALLOW_SHIFT = true;
+    static public final boolean SHOW_EXCHANGERATES = false;
+    static public final boolean ALLOW_SHIFT = false;
+    static public final int XMR_DECIMALS = 11;
 
     static private final String WALLET_DIR = "wallets";
     static private final String MONERO_DIR = "monero";
@@ -159,11 +160,11 @@ public class Helper {
     }
 
     static public BigDecimal getDecimalAmount(long amount) {
-        return new BigDecimal(amount).scaleByPowerOfTen(-12);
+        return new BigDecimal(amount).scaleByPowerOfTen(-XMR_DECIMALS);
     }
 
     static public String getDisplayAmount(long amount) {
-        return getDisplayAmount(amount, 12);
+        return getDisplayAmount(amount, XMR_DECIMALS);
     }
 
     static public String getDisplayAmount(long amount, int maxDecimals) {
@@ -195,7 +196,7 @@ public class Helper {
     static public String getDisplayAmount(double amount) {
         // a Java bug does not strip zeros properly if the value is 0
         BigDecimal d = new BigDecimal(amount)
-                .setScale(12, BigDecimal.ROUND_HALF_UP)
+                .setScale(XMR_DECIMALS, BigDecimal.ROUND_HALF_UP)
                 .stripTrailingZeros();
         if (d.scale() < 1)
             d = d.setScale(1, BigDecimal.ROUND_UNNECESSARY);

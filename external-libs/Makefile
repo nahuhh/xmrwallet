@@ -1,9 +1,6 @@
 # ln -s /opt/monero monero
 
-MONERO_BRANCH=`git -C monero branch | grep "^\*" | sed 's/^..//'`
-MONERUJO_BRANCH=`git -C . branch | grep "^\*" | sed 's/^..//'`
-
-all: arm64-v8a armeabi-v7a x86_64 x86 include VERSION
+all: arm64-v8a x86_64 include VERSION
 
 arm64-v8a: monero
 	-rm -rf arm64-v8a
@@ -42,7 +39,7 @@ include: monero
 	cp monero/src/wallet/api/wallet2_api.h include/
 
 VERSION:
-	echo MONERUJO `git -C . branch | grep "^\*" | sed 's/^..//'` with MONERO `git -C monero branch | grep "^\*" | sed 's/^..//'` > VERSION
+	echo MONERUJO_WOW `git -C . branch | grep "^\*" | sed 's/^..//'` with WOWMONERO `git -C monero branch | grep "^\*" | sed 's/^..//'` > VERSION
 
 clean:
 	-rm -rf arm64-v8a
