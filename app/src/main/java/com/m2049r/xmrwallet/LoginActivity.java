@@ -474,6 +474,7 @@ public class LoginActivity extends BaseActivity
     @Override
     public void onWalletBackup(String walletName) {
         Timber.d("backup for wallet ." + walletName + ".");
+        // overwrite any pending backup request
         zipBackup = new ZipBackup(this, walletName);
 
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
@@ -500,14 +501,18 @@ public class LoginActivity extends BaseActivity
             if (data == null) {
                 // nothing selected
                 Toast.makeText(this, getString(R.string.backup_failed), Toast.LENGTH_LONG).show();
+                zipBackup = null;
                 return;
             }
             try {
+                if (zipBackup == null) return; // ignore unsolicited request
                 zipBackup.writeTo(data.getData());
                 Toast.makeText(this, getString(R.string.backup_success), Toast.LENGTH_SHORT).show();
             } catch (IOException ex) {
                 Timber.e(ex);
                 Toast.makeText(this, getString(R.string.backup_failed), Toast.LENGTH_LONG).show();
+            } finally {
+                zipBackup = null;
             }
         } else if (requestCode == RESTORE_BACKUP_INTENT) {
             if (data == null) {
@@ -551,6 +556,31 @@ public class LoginActivity extends BaseActivity
 
         AlertDialog.Builder builder = new MaterialAlertDialogBuilder(this);
         builder.setMessage(getString(R.string.delete_alert_message))
+                .setTitle(walletName)
+                .setPositiveButton(getString(R.string.delete_alert_yes), dialogClickListener)
+                .setNegativeButton(getString(R.string.delete_alert_no), dialogClickListener)
+                .show();
+    }
+
+    @Override
+    public void onWalletDeleteCache(final String walletName) {
+        Timber.d("delete cache for wallet ." + walletName + ".");
+        if (checkServiceRunning()) return;
+        DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    if (!deleteWalletCache(Helper.getWalletFile(LoginActivity.this, walletName))) {
+                        Toast.makeText(LoginActivity.this, getString(R.string.delete_failed), Toast.LENGTH_LONG).show();
+                    }
+                    break;
+                case DialogInterface.BUTTON_NEGATIVE:
+                    // do nothing
+                    break;
+            }
+        };
+
+        AlertDialog.Builder builder = new MaterialAlertDialogBuilder(this);
+        builder.setMessage(getString(R.string.deletecache_alert_message, walletName))
                 .setTitle(walletName)
                 .setPositiveButton(getString(R.string.delete_alert_yes), dialogClickListener)
                 .setNegativeButton(getString(R.string.delete_alert_no), dialogClickListener)
@@ -1021,6 +1051,18 @@ public class LoginActivity extends BaseActivity
         }
         Timber.d("deleteWallet is %s", success);
         KeyStoreHelper.removeWalletUserPass(this, walletFile.getName());
+        return success;
+    }
+
+    boolean deleteWalletCache(File walletFile) {
+        Timber.d("deleteWalletCache %s", walletFile.getAbsolutePath());
+        File dir = walletFile.getParentFile();
+        String name = walletFile.getName();
+        boolean success = true;
+        File cacheFile = new File(dir, name);
+        if (cacheFile.exists()) {
+            success = cacheFile.delete();
+        }
         return success;
     }
 
