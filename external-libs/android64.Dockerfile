@@ -26,7 +26,7 @@ ENV ANDROID_SDK_ROOT ${WORKDIR}/tools
 ENV ANDROID_NDK_ROOT ${WORKDIR}/android-ndk-r${ANDROID_NDK_REVISION}
 ENV PREFIX /opt/android/prefix
 
-ENV TOOLCHAIN_DIR ${WORKDIR}/toolchain-arm
+ENV TOOLCHAIN_DIR ${WORKDIR}/toolchain
 RUN set -x \
     && ${ANDROID_NDK_ROOT}/build/tools/make_standalone_toolchain.py \
          --arch arm64 \
