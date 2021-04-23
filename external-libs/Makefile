@@ -1,6 +1,6 @@
 FLAVOUR=wownero
 
-all: arm64-v8a x86_64 include VERSION
+all: arm64-v8a x86_64 include/wallet2_api.h VERSION
 
 arm64-v8a: $(FLAVOUR) android64.Dockerfile
 	-rm -rf arm64-v8a
