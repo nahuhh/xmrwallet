@@ -372,13 +372,13 @@
     <string name="onboarding_button_ready">Я готов!</string>
 
     <string name="onboarding_welcome_title">Добро пожаловать в wonerujo!</string>
-    <string name="onboarding_welcome_information">Данное приложение позволяет создавать и использовать кошельки Monero. Вы можете хранить ваши сладкие moneroj в них.</string>
+    <string name="onboarding_welcome_information">Данное приложение позволяет создавать и использовать кошельки WOW. Вы можете хранить ваши сладкие WOW в них.</string>
     <string name="onboarding_seed_title">Храните свои ключи в безопасности</string>
-    <string name="onboarding_seed_information">Секретная фраза дает полный доступ к кошельку. Если вы её потеряете, мы не сможем её восстановить и вы потеряете ваши moneroj.</string>
+    <string name="onboarding_seed_information">Секретная фраза дает полный доступ к кошельку. Если вы её потеряете, мы не сможем её восстановить и вы потеряете ваши WOW.</string>
     <string name="onboarding_xmrto_title">Отправка других криптовалют</string>
     <string name="onboarding_xmrto_information">wonerujo имеет поддержку SideShift.ai. Просто вставьте (или просканируйте) адрес BTC, LTC, ETH, DASH или DOGE и вы будете отправлять эти криптовалюты, тратя XMR.</string>
     <string name="onboarding_nodes_title">Узлы, узлы, узлы…</string>
-    <string name="onboarding_nodes_information">Узлы позволяют подключаться к сети Monero. Выбирайте между общедоступными узлами или используйте свой собственный для безопасности IP адреса.</string>
+    <string name="onboarding_nodes_information">Узлы позволяют подключаться к сети WOW. Выбирайте между общедоступными узлами или используйте свой собственный для безопасности IP адреса.</string>
     <string name="onboarding_fpsend_title">Отправка с помощью отпечатка пальца</string>
     <string name="onboarding_fpsend_information">Теперь вы можете отправлять XMR с помощью отпечатка пальца, если вы его включили. Чтобы запросить пароль, просто отключите доступ к отпечаткам пальцев.</string>
 
@@ -412,7 +412,7 @@
     ]]></string>
 
     <string name="info_xmrto_help_xmr"><![CDATA[
-        <b>Введите или просканируйте адрес Monero.</b>
+        <b>Введите или просканируйте адрес WOW.</b>
     ]]></string>
 
     <string name="subbaddress_title">Подадреса</string>

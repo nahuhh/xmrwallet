@@ -350,7 +350,7 @@
 
     <string name="label_restoreheight">Återställningshöjd</string> <!-- Restore Height -->
 
-    <string name="toast_ledger_start_app">Starta Monero app på %1$s</string>
+    <string name="toast_ledger_start_app">Starta WOW app på %1$s</string>
 
     <string name="menu_rescan">Skanna om!</string>
 
@@ -359,13 +359,13 @@
     <string name="onboarding_button_ready">Jag är redo!</string>
 
     <string name="onboarding_welcome_title">Välkommen till wonerujo!</string>
-    <string name="onboarding_welcome_information">Denna app tillåter dig att skapa och använda Monero plånböcker. Du kan förvara dina kära moneroj i dem.</string>
+    <string name="onboarding_welcome_information">Denna app tillåter dig att skapa och använda WOW plånböcker. Du kan förvara dina kära WOW i dem.</string>
     <string name="onboarding_seed_title">Håll dina seed i säkert förvar.</string>
-    <string name="onboarding_seed_information">Seed ger full åtkomst till den som har den. Om du förlorar det, kan vi inte hjälpa dig och du förlorar dina kära moneroj.</string>
+    <string name="onboarding_seed_information">Seed ger full åtkomst till den som har den. Om du förlorar det, kan vi inte hjälpa dig och du förlorar dina kära WOW.</string>
     <string name="onboarding_xmrto_title">Skicka krypto</string>
     <string name="onboarding_xmrto_information">wonerujo har SideShift.ai support inbyggt. Bara klistra in eller scanna en BTC, LTC, ETH, DASH or DOGE address och du skickar dessa krypto genom att spendera XMR.</string>
     <string name="onboarding_nodes_title">Noder, på ditt sätt.</string>
-    <string name="onboarding_nodes_information">Noder ansluter dig till Monero-nätverket. Välj mellan offentliga noder eller gå all-in "cypherpunk" med din egen.</string>
+    <string name="onboarding_nodes_information">Noder ansluter dig till WOW-nätverket. Välj mellan offentliga noder eller gå all-in "cypherpunk" med din egen.</string>
     <string name="onboarding_fpsend_title">Skicka med fingeravtryck</string>
     <string name="onboarding_fpsend_information">Du kan nu skicka XMR med bara ditt fingeravtryck om du aktiverar det. För att begära lösenordet, inaktivera bara fingeravtrycksåtkomst.</string>
 
