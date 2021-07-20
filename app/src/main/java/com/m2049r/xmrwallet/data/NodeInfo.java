@@ -48,7 +48,7 @@ import okhttp3.ResponseBody;
 import timber.log.Timber;
 
 public class NodeInfo extends Node {
-    final static public int MIN_MAJOR_VERSION = 14;
+    final static public int MIN_MAJOR_VERSION = 19;
     final static public String RPC_VERSION = "2.0";
 
     @Getter
@@ -250,7 +250,7 @@ public class NodeInfo extends Node {
         return false;
     }
 
-    static final private int[] TEST_PORTS = {18089}; // check only opt-in port
+    static final private int[] TEST_PORTS = {Node.getDefaultRpcPort()};
 
     public boolean findRpcService() {
         // if already have an rpcPort, use that
