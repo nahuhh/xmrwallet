@@ -29,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 // this is not the TransactionInfo from the API as that is owned by the TransactionHistory
 // this is a POJO for the TransactionInfoAdapter
 public class TransactionInfo implements Parcelable, Comparable<TransactionInfo> {
-    public static final int CONFIRMATION = 10; // blocks
+    public static final int CONFIRMATION = 4; // CRYPTONOTE_DEFAULT_TX_SPENDABLE_AGE
 
     @RequiredArgsConstructor
     public enum Direction {
