@@ -2,14 +2,14 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 30
-    buildToolsVersion '30.0.2'
+    buildToolsVersion '30.0.3'
     ndkVersion '17.2.4988734'
     defaultConfig {
         applicationId "com.m2049r.wowwallet"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 100500
-        versionName "2.0.5.0 'Puginarug'"
+        versionCode 11010
+        versionName "2.1.1.0 'Vertant'"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
