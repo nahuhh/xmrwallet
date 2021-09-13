@@ -173,7 +173,7 @@ set_target_properties(wallet-crypto PROPERTIES IMPORTED_LOCATION
 
 add_library(cryptonote_format_utils_basic STATIC IMPORTED)
 set_target_properties(cryptonote_format_utils_basic PROPERTIES IMPORTED_LOCATION
-        ${EXTERNAL_LIBS_DIR}/${ANDROID_ABI}/monero/libcryptonote_format_utils_basic.a)
+        ${EXTERNAL_LIBS_DIR}/${ANDROID_ABI}/wownero/libcryptonote_format_utils_basic.a)
 
 #############
 # System

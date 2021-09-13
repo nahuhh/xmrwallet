@@ -191,12 +191,13 @@ struct MyWalletListener : Monero::WalletListener {
 /**
  * @brief refreshed - called when wallet refreshed by background thread or explicitly refreshed by calling "refresh" synchronously
  */
-    void refreshed() {
+    void refreshed(bool success) {
         std::lock_guard<std::mutex> lock(_listenerMutex);
         if (jlistener == nullptr) return;
-        LOGD("refreshed");
-        JNIEnv *jenv;
+        LOGD("refreshed %s", success ? "true" : "false");
+        if (!success) return;
 
+        JNIEnv *jenv;
         int envStat = attachJVM(&jenv);
         if (envStat == JNI_ERR) return;
 
@@ -229,7 +230,7 @@ std::vector<std::string> java2cpp(JNIEnv *env, jobject arrayList) {
     return result;
 }
 
-jobject cpp2java(JNIEnv *env, const std::vector<std::string>& vector) {
+jobject cpp2java(JNIEnv *env, const std::vector<std::string> &vector) {
 
     jmethodID java_util_ArrayList_ = env->GetMethodID(class_ArrayList, "<init>", "(I)V");
     jmethodID java_util_ArrayList_add = env->GetMethodID(class_ArrayList, "add",
@@ -506,8 +507,8 @@ Java_com_m2049r_xmrwallet_model_WalletManager_startMining(JNIEnv *env, jobject i
     const char *_address = env->GetStringUTFChars(address, nullptr);
     bool success =
             Monero::WalletManagerFactory::getWalletManager()->startMining(std::string(_address),
-                                                                             background_mining,
-                                                                             ignore_battery);
+                                                                          background_mining,
+                                                                          ignore_battery);
     env->ReleaseStringUTFChars(address, _address);
     return static_cast<jboolean>(success);
 }
@@ -538,7 +539,7 @@ Java_com_m2049r_xmrwallet_model_WalletManager_closeJ(JNIEnv *env, jobject instan
                                                      jobject walletInstance) {
     Monero::Wallet *wallet = getHandle<Monero::Wallet>(env, walletInstance);
     bool closeSuccess = Monero::WalletManagerFactory::getWalletManager()->closeWallet(wallet,
-                                                                                         false);
+                                                                                      false);
     if (closeSuccess) {
         MyWalletListener *walletListener = getHandle<MyWalletListener>(env, walletInstance,
                                                                        "listenerHandle");
@@ -937,9 +938,9 @@ Java_com_m2049r_xmrwallet_model_Wallet_createTransactionJ(JNIEnv *env, jobject i
     Monero::Wallet *wallet = getHandle<Monero::Wallet>(env, instance);
 
     Monero::PendingTransaction *tx = wallet->createTransaction(_dst_addr, _payment_id,
-                                                                  amount, (uint32_t) mixin_count,
-                                                                  _priority,
-                                                                  (uint32_t) accountIndex);
+                                                               amount, (uint32_t) mixin_count,
+                                                               _priority,
+                                                               (uint32_t) accountIndex);
 
     env->ReleaseStringUTFChars(dst_addr, _dst_addr);
     env->ReleaseStringUTFChars(payment_id, _payment_id);
@@ -962,9 +963,9 @@ Java_com_m2049r_xmrwallet_model_Wallet_createSweepTransaction(JNIEnv *env, jobje
     Monero::optional<uint64_t> empty;
 
     Monero::PendingTransaction *tx = wallet->createTransaction(_dst_addr, _payment_id,
-                                                                  empty, (uint32_t) mixin_count,
-                                                                  _priority,
-                                                                  (uint32_t) accountIndex);
+                                                               empty, (uint32_t) mixin_count,
+                                                               _priority,
+                                                               (uint32_t) accountIndex);
 
     env->ReleaseStringUTFChars(dst_addr, _dst_addr);
     env->ReleaseStringUTFChars(payment_id, _payment_id);
@@ -1174,7 +1175,7 @@ Java_com_m2049r_xmrwallet_model_Wallet_getLastSubaddress(JNIEnv *env, jobject in
 JNIEXPORT jint JNICALL
 Java_com_m2049r_xmrwallet_model_TransactionHistory_getCount(JNIEnv *env, jobject instance) {
     Monero::TransactionHistory *history = getHandle<Monero::TransactionHistory>(env,
-                                                                                      instance);
+                                                                                instance);
     return history->count();
 }
 
@@ -1241,7 +1242,7 @@ jobject newTransactionInfo(JNIEnv *env, Monero::TransactionInfo *info) {
 #include <stdio.h>
 #include <stdlib.h>
 
-jobject cpp2java(JNIEnv *env, const std::vector<Monero::TransactionInfo *>& vector) {
+jobject cpp2java(JNIEnv *env, const std::vector<Monero::TransactionInfo *> &vector) {
 
     jmethodID java_util_ArrayList_ = env->GetMethodID(class_ArrayList, "<init>", "(I)V");
     jmethodID java_util_ArrayList_add = env->GetMethodID(class_ArrayList, "add",
@@ -1260,7 +1261,7 @@ jobject cpp2java(JNIEnv *env, const std::vector<Monero::TransactionInfo *>& vect
 JNIEXPORT jobject JNICALL
 Java_com_m2049r_xmrwallet_model_TransactionHistory_refreshJ(JNIEnv *env, jobject instance) {
     Monero::TransactionHistory *history = getHandle<Monero::TransactionHistory>(env,
-                                                                                      instance);
+                                                                                instance);
     history->refresh();
     return cpp2java(env, history->getAll());
 }
