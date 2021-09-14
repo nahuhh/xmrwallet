@@ -300,16 +300,15 @@ public class NodeFragment extends Fragment
                             publishProgress(info);
                         }
                     });
-                    // also seed with monero seed nodes (see p2p/net_node.inl:410 in monero src)
-                    seedList.add(new NodeInfo(new InetSocketAddress("107.152.130.98", 18080)));
-                    seedList.add(new NodeInfo(new InetSocketAddress("212.83.175.67", 18080)));
-                    seedList.add(new NodeInfo(new InetSocketAddress("5.9.100.248", 18080)));
-                    seedList.add(new NodeInfo(new InetSocketAddress("163.172.182.165", 18080)));
-                    seedList.add(new NodeInfo(new InetSocketAddress("161.67.132.39", 18080)));
-                    seedList.add(new NodeInfo(new InetSocketAddress("198.74.231.92", 18080)));
-                    seedList.add(new NodeInfo(new InetSocketAddress("195.154.123.123", 18080)));
-                    seedList.add(new NodeInfo(new InetSocketAddress("212.83.172.165", 18080)));
-                    seedList.add(new NodeInfo(new InetSocketAddress("192.110.160.146", 18080)));
+                    Timber.d("MOREMOREMORE");
+                    // also seed with wownero seed nodes (see p2p/net_node.inl in wownero src)
+                    seedList.add(new NodeInfo(new InetSocketAddress("158.69.60.225", 34567)));
+                    seedList.add(new NodeInfo(new InetSocketAddress("159.65.91.59", 34567)));
+                    seedList.add(new NodeInfo(new InetSocketAddress("164.90.230.176", 34567)));
+                    seedList.add(new NodeInfo(new InetSocketAddress("64.227.81.144", 34567)));
+                    seedList.add(new NodeInfo(new InetSocketAddress("188.166.237.187", 34567)));
+                    seedList.add(new NodeInfo(new InetSocketAddress("51.161.131.176", 34567)));
+                    seedList.add(new NodeInfo(new InetSocketAddress("167.114.196.241", 34567)));
                     d.seedPeers(seedList);
                     d.awaitTermination(NODES_TO_FIND);
                 }

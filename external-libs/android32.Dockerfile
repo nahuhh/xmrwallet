@@ -26,10 +26,10 @@ ENV ANDROID_SDK_ROOT ${WORKDIR}/tools
 ENV ANDROID_NDK_ROOT ${WORKDIR}/android-ndk-r${ANDROID_NDK_REVISION}
 ENV PREFIX /opt/android/prefix
 
-ENV TOOLCHAIN_DIR ${WORKDIR}/toolchain
+ENV TOOLCHAIN_DIR ${WORKDIR}/toolchain-
 RUN set -x \
     && ${ANDROID_NDK_ROOT}/build/tools/make_standalone_toolchain.py \
-         --arch arm64 \
+         --arch arm \
          --api 21 \
          --install-dir ${TOOLCHAIN_DIR} \
          --stl=libc++
@@ -58,7 +58,7 @@ RUN set -x \
     && ./bootstrap.sh --prefix=${PREFIX}
 
 ENV HOST_PATH $PATH
-ENV PATH $TOOLCHAIN_DIR/aarch64-linux-android/bin:$TOOLCHAIN_DIR/bin:$PATH
+ENV PATH $TOOLCHAIN_DIR/arm-linux-androideabi/bin:$TOOLCHAIN_DIR/bin:$PATH
 
 ARG NPROC=1
 
@@ -71,7 +71,7 @@ RUN set -x \
     && tar -xzf libiconv-${ICONV_VERSION}.tar.gz \
     && rm -f libiconv-${ICONV_VERSION}.tar.gz \
     && cd libiconv-${ICONV_VERSION} \
-    && CC=aarch64-linux-android-clang CXX=aarch64-linux-android-clang++ ./configure --build=x86_64-linux-gnu --host=aarch64-linux-android --prefix=${PREFIX} --disable-rpath \
+    && CC=arm-linux-androideabi-clang CXX=arm-linux-androideabi-clang++ ./configure --build=x86_64-linux-gnu --host=arm-linux-androideabi --prefix=${PREFIX} --disable-rpath \
     && make -j${NPROC} && make install
 
 ## Build BOOST
@@ -102,9 +102,9 @@ RUN set -x \
     && tar -xzf openssl-${OPENSSL_VERSION}.tar.gz \
     && rm openssl-${OPENSSL_VERSION}.tar.gz \
     && cd openssl-${OPENSSL_VERSION} \
-    && sed -i -e "s/mandroid/target\ aarch64\-linux\-android/" Configure \
+    && sed -i -e "s/mandroid/target\ armv7\-none\-linux\-androideabi/" Configure \
     && CC=clang CXX=clang++ \
-           ./Configure android \
+           ./Configure android-armv7 \
            no-asm \
            no-shared --static \
            --with-zlib-include=${WORKDIR}/zlib/include --with-zlib-lib=${WORKDIR}/zlib/lib \
@@ -120,7 +120,7 @@ RUN set -x \
     && cd libzmq \
     && test `git rev-parse HEAD` = ${ZMQ_HASH} || exit 1 \
     && ./autogen.sh \
-    && CC=clang CXX=clang++ ./configure --prefix=${PREFIX} --host=aarch64-linux-android --enable-static --disable-shared \
+    && CC=clang CXX=clang++ ./configure --prefix=${PREFIX} --host=arm-linux-androideabi --enable-static --disable-shared \
     && make -j${NPROC} \
     && make install
 
@@ -132,7 +132,7 @@ RUN set -x \
     && cd libsodium \
     && test `git rev-parse HEAD` = ${SODIUM_HASH} || exit 1 \
     && ./autogen.sh \
-    && CC=clang CXX=clang++ ./configure --prefix=${PREFIX} --host=aarch64-linux-android --enable-static --disable-shared \
+    && CC=clang CXX=clang++ ./configure --prefix=${PREFIX} --host=arm-linux-androideabi --enable-static --disable-shared \
     && make  -j${NPROC} \
     && make install
 
@@ -144,7 +144,7 @@ RUN set -x \
        CMAKE_LIBRARY_PATH="${PREFIX}/lib" \
        ANDROID_STANDALONE_TOOLCHAIN_PATH=${TOOLCHAIN_DIR} \
        USE_SINGLE_BUILDDIR=1 \
-       PATH=${HOST_PATH} make release-static-android-armv8-wallet_api -j${NPROC}
+       PATH=${HOST_PATH} make release-static-android-armv7-wallet_api -j${NPROC}
 
 RUN set -x \
     && cd /src/build/release \
