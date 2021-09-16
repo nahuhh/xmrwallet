@@ -8,8 +8,8 @@ android {
         applicationId "com.m2049r.wowwallet"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 1101000
-        versionName "2.1.1.0 'Vertant'"
+        versionCode 1101001
+        versionName "2.1.1.1 'Vertant'"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
