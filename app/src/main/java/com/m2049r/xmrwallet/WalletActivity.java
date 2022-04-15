@@ -1211,6 +1211,7 @@ public class WalletActivity extends BaseActivity implements WalletFragment.Liste
             if (info.addressIndex > lastUsedSubaddress)
                 lastUsedSubaddress = info.addressIndex;
         }
+        lastUsedSubaddress++;
         return getWallet().getSubaddressObject(lastUsedSubaddress);
     }
 
