@@ -64,10 +64,10 @@ public class PasswordEntryView extends TextInputLayout implements TextWatcher {
                 icon = R.drawable.ic_smiley_ecstatic_filled;
             else
                 icon = R.drawable.ic_smiley_gunther_filled;
+            setError(null);
+        } else {
+            setError(getContext().getString(R.string.generate_wallet_password));
         }
         setErrorIconDrawable(icon);
-        if (icon != 0)
-            setError(" ");
-        else setError(null);
     }
 }

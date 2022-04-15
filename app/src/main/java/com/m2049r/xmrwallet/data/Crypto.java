@@ -5,9 +5,6 @@ import androidx.annotation.Nullable;
 
 import com.m2049r.xmrwallet.R;
 import com.m2049r.xmrwallet.model.Wallet;
-import com.m2049r.xmrwallet.util.validator.BitcoinAddressType;
-import com.m2049r.xmrwallet.util.validator.BitcoinAddressValidator;
-import com.m2049r.xmrwallet.util.validator.EthAddressValidator;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

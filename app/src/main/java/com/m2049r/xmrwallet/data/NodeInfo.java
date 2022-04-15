@@ -209,6 +209,7 @@ public class NodeInfo extends Node {
     }
 
     private boolean testRpcService(int port) {
+        if(!this.isOnion()) return false;
         Timber.d("Testing %s", toNodeString());
         clear();
         if (hostAddress.isOnion() && !NetCipherHelper.isTor()) {

@@ -33,6 +33,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.Proxy;
+import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -235,6 +236,14 @@ public class NetCipherHelper implements StatusCallback {
             onDisabled();
         } else if (!orbotInit) {
             orbotInit = orbot.init();
+            boolean installed = OrbotHelper.isOrbotInstalled(context);
+            boolean running = isTorRunning();
+            if(installed && running) {
+                // Orbot seems to be messing up and not giving the proper STATUS intent when it's already running, only when it's not (and is being started by us).
+                Intent statusIntent = new Intent(OrbotHelper.ACTION_STATUS);
+                statusIntent.putExtra(OrbotHelper.EXTRA_STATUS, OrbotHelper.STATUS_ON);
+                onEnabled(statusIntent);
+            }
         } else {
             orbot.requestStart(context);
         }
@@ -370,5 +379,14 @@ public class NetCipherHelper implements StatusCallback {
 
     public void installOrbot(Activity host) {
         host.startActivity(OrbotHelper.getOrbotInstallIntent(context));
+    }
+
+    public boolean isTorRunning() {
+        try {
+            new ServerSocket(9050).close();
+            return false;
+        } catch(IOException e) {
+            return true;
+        }
     }
 }

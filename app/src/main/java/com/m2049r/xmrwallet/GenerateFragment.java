@@ -126,6 +126,12 @@ public class GenerateFragment extends Fragment {
         etWalletViewKey.getEditText().setRawInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         etWalletSpendKey.getEditText().setRawInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
+        etWalletPassword.getEditText().setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                checkPassword();
+            }
+        });
+
         etWalletName.getEditText().setOnFocusChangeListener((v, hasFocus) -> {
             if (!hasFocus) {
                 checkName();
@@ -199,7 +205,9 @@ public class GenerateFragment extends Fragment {
                 etWalletPassword.getEditText().setOnEditorActionListener((v, actionId, event) -> {
                     if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN))
                             || (actionId == EditorInfo.IME_ACTION_DONE)) {
-                        etWalletRestoreHeight.requestFocus();
+                        if(checkPassword()) {
+                            etWalletRestoreHeight.requestFocus();
+                        }
                         return true;
                     }
                     return false;
@@ -209,7 +217,9 @@ public class GenerateFragment extends Fragment {
                 etWalletPassword.getEditText().setOnEditorActionListener((v, actionId, event) -> {
                     if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN))
                             || (actionId == EditorInfo.IME_ACTION_NEXT)) {
-                        etWalletMnemonic.requestFocus();
+                        if(checkPassword()) {
+                            etWalletMnemonic.requestFocus();
+                        }
                         return true;
                     }
                     return false;
@@ -233,7 +243,9 @@ public class GenerateFragment extends Fragment {
                 etWalletPassword.getEditText().setOnEditorActionListener((v, actionId, event) -> {
                     if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN))
                             || (actionId == EditorInfo.IME_ACTION_NEXT)) {
-                        etWalletAddress.requestFocus();
+                        if(checkPassword()) {
+                            etWalletAddress.requestFocus();
+                        }
                         return true;
                     }
                     return false;
@@ -323,6 +335,19 @@ public class GenerateFragment extends Fragment {
         }
         if (ok) {
             etWalletName.setError(null);
+        }
+        return ok;
+    }
+
+    private boolean checkPassword() {
+        String password = etWalletPassword.getEditText().getText().toString();
+        boolean ok = true;
+        if (password.length() == 0) {
+            etWalletPassword.setError(getString(R.string.generate_wallet_password));
+            ok = false;
+        }
+        if (ok) {
+            etWalletPassword.setError(null);
         }
         return ok;
     }
@@ -418,6 +443,7 @@ public class GenerateFragment extends Fragment {
     private void generateWallet() {
         if (!checkName()) return;
         if (!checkHeight()) return;
+        if(!checkPassword()) return;
 
         String name = etWalletName.getEditText().getText().toString();
         String password = etWalletPassword.getEditText().getText().toString();

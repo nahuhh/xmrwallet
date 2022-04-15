@@ -81,7 +81,9 @@
                     <TextView
                         android:id="@+id/tvNodeName"
                         style="@style/MoneroText.PosAmount"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
+                        android:singleLine="true"
+                        android:ellipsize="middle"
                         android:layout_height="wrap_content"
                         tools:text="monero-v9.monerujo.io" />
 

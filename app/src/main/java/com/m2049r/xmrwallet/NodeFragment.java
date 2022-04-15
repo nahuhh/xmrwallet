@@ -61,6 +61,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import info.guardianproject.netcipher.proxy.OrbotHelper;
 import timber.log.Timber;
 
 public class NodeFragment extends Fragment
@@ -382,6 +383,9 @@ public class NodeFragment extends Fragment
             final String host = etNodeHost.getEditText().getText().toString().trim();
             if (host.isEmpty()) {
                 etNodeHost.setError(getString(R.string.node_host_empty));
+                return false;
+            } else if(!OrbotHelper.isOnionAddress(host)) {
+                etNodeHost.setError("Only v3 onions allowed!");
                 return false;
             }
             final boolean setHostSuccess = Helper.runWithNetwork(() -> {

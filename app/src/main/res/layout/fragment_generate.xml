@@ -34,11 +34,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/header_top_first"
-            app:boxStrokeErrorColor="?colorPrimary"
             app:errorEnabled="true"
-            app:errorIconDrawable="@drawable/ic_smiley_gunther_filled"
-            app:errorIconTint="?colorPrimary"
-            app:errorTextColor="?colorPrimary">
+            app:errorIconDrawable="@drawable/ic_smiley_sad_filled">
 
             <com.google.android.material.textfield.TextInputEditText
                 style="@style/MoneroEdit"

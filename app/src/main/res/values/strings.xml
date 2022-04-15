@@ -185,6 +185,7 @@
     <string name="generate_button_accept">I have noted the mnemonic seed</string>
 
     <string name="generate_wallet_name">Give me a name!</string>
+    <string name="generate_wallet_password">Give me a password!</string>
     <string name="generate_wallet_exists">Wallet exists!</string>
     <string name="generate_wallet_dot">Cannot begin with .</string>
     <string name="generate_wallet_creating">Creating wallet</string>
