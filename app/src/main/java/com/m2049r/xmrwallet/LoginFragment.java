@@ -46,6 +46,7 @@ import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.m2049r.xmrwallet.data.NodeInfo;
 import com.m2049r.xmrwallet.dialog.HelpFragment;
 import com.m2049r.xmrwallet.layout.WalletInfoAdapter;
+import com.m2049r.xmrwallet.model.NetworkType;
 import com.m2049r.xmrwallet.model.WalletManager;
 import com.m2049r.xmrwallet.util.Helper;
 import com.m2049r.xmrwallet.util.KeyStoreHelper;
@@ -72,10 +73,6 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
 
     private View tvGuntherSays;
     private ImageView ivGunther;
-    private TextView tvNodeName;
-    private TextView tvNodeInfo;
-    private ImageButton ibNetwork;
-    private CircularProgressIndicator pbNetwork;
 
     private Listener activityCallback;
 
@@ -146,7 +143,6 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
         activityCallback.setToolbarButton(Toolbar.BUTTON_SETTINGS);
         activityCallback.showNet();
         showNetwork();
-        //activityCallback.runOnNetCipher(this::pingSelectedNode);
     }
 
     @Override
@@ -196,16 +192,6 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
 
         ViewGroup llNotice = view.findViewById(R.id.llNotice);
         Notice.showAll(llNotice, ".*_login");
-
-        view.findViewById(R.id.llNode).setOnClickListener(v -> startNodePrefs());
-        tvNodeName = view.findViewById(R.id.tvNodeName);
-        tvNodeInfo = view.findViewById(R.id.tvInfo);
-        view.findViewById(R.id.ibRenew).setOnClickListener(v -> findBestNode());
-        ibNetwork = view.findViewById(R.id.ibNetwork);
-        ibNetwork.setOnClickListener(v -> changeNetwork());
-        ibNetwork.setEnabled(false);
-        pbNetwork = view.findViewById(R.id.pbNetwork);
-
         Helper.hideKeyboard(getActivity());
 
         loadList();
@@ -219,6 +205,17 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
     @Override
     public void onInteraction(final View view, final WalletManager.WalletInfo infoItem) {
         openWallet(infoItem.getName(), false);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        final int id = item.getItemId();
+        if (id == R.id.action_network_settings) {
+            startNodePrefs();
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
     }
 
     private void openWallet(String name, boolean streetmode) {
@@ -412,30 +409,9 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
         return nodeList.get(0);
     }
 
-    private void setSubtext(String status) {
-        final Context ctx = getContext();
-        final Spanned text = Html.fromHtml(ctx.getString(R.string.status,
-                Integer.toHexString(ThemeHelper.getThemedColor(ctx, R.attr.positiveColor) & 0xFFFFFF),
-                Integer.toHexString(ThemeHelper.getThemedColor(ctx, android.R.attr.colorBackground) & 0xFFFFFF),
-                status, ""));
-        tvNodeInfo.setText(text);
-    }
-
     private class AsyncFindBestNode extends AsyncTask<Integer, Void, NodeInfo> {
         final static int PING_SELECTED = 0;
         final static int FIND_BEST = 1;
-
-        private boolean netState;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            tvNodeName.setVisibility(View.GONE);
-            pbNetwork.setVisibility(View.VISIBLE);
-            netState = ibNetwork.isClickable();
-            ibNetwork.setClickable(false);
-            setSubtext(getString(R.string.node_waiting));
-        }
 
         @Override
         protected NodeInfo doInBackground(Integer... params) {
@@ -470,32 +446,9 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
         }
 
         @Override
-        protected void onPostExecute(NodeInfo result) {
-            if (!isAdded()) return;
-            tvNodeName.setVisibility(View.VISIBLE);
-            pbNetwork.setVisibility(View.INVISIBLE);
-            ibNetwork.setClickable(netState);
-            if (result != null && result.isOnion()) {
-                Timber.d("found a good node %s", result.toString());
-                showNode(result);
-            } else {
-                tvNodeName.setText(getResources().getText(R.string.node_create_hint));
-                tvNodeName.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-                tvNodeInfo.setText(null);
-                tvNodeInfo.setVisibility(View.GONE);
-            }
-        }
-
-        @Override
         protected void onCancelled(NodeInfo result) { //TODO: cancel this on exit from fragment
             Timber.d("cancelled with %s", result);
         }
-    }
-
-    private void showNode(NodeInfo nodeInfo) {
-        tvNodeName.setText(nodeInfo.getName());
-        nodeInfo.showInfo(tvNodeInfo);
-        tvNodeInfo.setVisibility(View.VISIBLE);
     }
 
     private void startNodePrefs() {
@@ -521,39 +474,6 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
         Timber.d("SHOW %s", status);
         if (status == torStatus) return;
         torStatus = status;
-        switch (status) {
-            case ENABLED:
-                ibNetwork.setImageResource(R.drawable.ic_network_tor_on);
-                ibNetwork.setEnabled(true);
-                ibNetwork.setClickable(true);
-                pbNetwork.setVisibility(View.INVISIBLE);
-                break;
-            case NOT_ENABLED:
-            case DISABLED:
-                ibNetwork.setImageResource(R.drawable.ic_network_clearnet);
-                ibNetwork.setEnabled(true);
-                ibNetwork.setClickable(true);
-                pbNetwork.setVisibility(View.INVISIBLE);
-                break;
-            case STARTING:
-                ibNetwork.setImageResource(R.drawable.ic_network_clearnet);
-                ibNetwork.setEnabled(false);
-                pbNetwork.setVisibility(View.VISIBLE);
-                break;
-            case STOPPING:
-                ibNetwork.setImageResource(R.drawable.ic_network_clearnet);
-                ibNetwork.setEnabled(false);
-                pbNetwork.setVisibility(View.VISIBLE);
-                break;
-            case NOT_INSTALLED:
-                ibNetwork.setEnabled(true);
-                ibNetwork.setClickable(true);
-                pbNetwork.setVisibility(View.INVISIBLE);
-                ibNetwork.setImageResource(R.drawable.ic_network_clearnet);
-                break;
-            default:
-                return;
-        }
         activityCallback.runOnNetCipher(this::pingSelectedNode);
     }
 }

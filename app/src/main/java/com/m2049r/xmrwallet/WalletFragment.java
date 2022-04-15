@@ -24,10 +24,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -37,6 +40,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.brnunes.swipeablerecyclerview.SwipeableRecyclerViewTouchListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.m2049r.xmrwallet.layout.TransactionInfoAdapter;
 import com.m2049r.xmrwallet.model.TransactionInfo;
 import com.m2049r.xmrwallet.model.Wallet;
@@ -53,7 +57,7 @@ import java.util.List;
 import timber.log.Timber;
 
 public class WalletFragment extends Fragment
-        implements TransactionInfoAdapter.OnInteractionListener {
+        implements TransactionInfoAdapter.OnInteractionListener, View.OnClickListener {
     private TransactionInfoAdapter adapter;
     private final NumberFormat formatter = NumberFormat.getInstance();
 
@@ -64,11 +68,13 @@ public class WalletFragment extends Fragment
     private TextView tvProgress;
     private ImageView ivSynced;
     private ProgressBar pbProgress;
-    private Button bReceive;
-    private Button bSend;
-    private ImageView ivStreetGunther;
-    private Drawable streetGunther = null;
     RecyclerView txlist;
+
+    private boolean isFabOpen = false;
+    private FloatingActionButton fab, fabNew, fabImport;
+    private RelativeLayout fabScreen;
+    private RelativeLayout fabNewL, fabImportL;
+    private Animation fab_open, fab_close, rotate_forward, rotate_backward, fab_open_screen, fab_close_screen;
 
     private final List<String> dismissedTransactions = new ArrayList<>();
 
@@ -94,7 +100,6 @@ public class WalletFragment extends Fragment
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_wallet, container, false);
 
-        ivStreetGunther = view.findViewById(R.id.ivStreetGunther);
         tvStreetView = view.findViewById(R.id.tvStreetView);
         llBalance = view.findViewById(R.id.llBalance);
         ((ProgressBar) view.findViewById(R.id.pbExchange)).getIndeterminateDrawable().
@@ -109,9 +114,6 @@ public class WalletFragment extends Fragment
         tvUnconfirmedAmount = view.findViewById(R.id.tvUnconfirmedAmount);
         showUnconfirmed(0);
         ivSynced = view.findViewById(R.id.ivSynced);
-
-        bSend = view.findViewById(R.id.bSend);
-        bReceive = view.findViewById(R.id.bReceive);
 
         txlist = view.findViewById(R.id.list);
         adapter = new TransactionInfoAdapter(getActivity(), this);
@@ -154,8 +156,24 @@ public class WalletFragment extends Fragment
                             }
                         }));
 
-        bSend.setOnClickListener(v -> activityCallback.onSendRequest(v));
-        bReceive.setOnClickListener(v -> activityCallback.onWalletReceive(v));
+        fabScreen = view.findViewById(R.id.fabScreen);
+        fab = view.findViewById(R.id.fab);
+        fabNew = view.findViewById(R.id.fabNew);
+        fabImport = view.findViewById(R.id.fabImport);
+
+        fabNewL = view.findViewById(R.id.fabNewL);
+        fabImportL = view.findViewById(R.id.fabImportL);
+
+        fab_open_screen = AnimationUtils.loadAnimation(getContext(), R.anim.fab_open_screen);
+        fab_close_screen = AnimationUtils.loadAnimation(getContext(), R.anim.fab_close_screen);
+        fab_open = AnimationUtils.loadAnimation(getContext(), R.anim.fab_open);
+        fab_close = AnimationUtils.loadAnimation(getContext(), R.anim.fab_close);
+        rotate_forward = AnimationUtils.loadAnimation(getContext(), R.anim.rotate_forward);
+        rotate_backward = AnimationUtils.loadAnimation(getContext(), R.anim.rotate_backward);
+        fab.setOnClickListener(this);
+        fabNew.setOnClickListener(this);
+        fabImport.setOnClickListener(this);
+        fabScreen.setOnClickListener(this);
 
         if (activityCallback.isSynced()) {
             onSynced();
@@ -167,8 +185,50 @@ public class WalletFragment extends Fragment
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void onClick(View v) {
+        final int id = v.getId();
+        Timber.d("onClick %d/%d", id, R.id.fabLedger);
+        if (id == R.id.fab) {
+            animateFAB();
+        } else if (id == R.id.fabNew) {
+            fabScreen.setVisibility(View.INVISIBLE);
+            activityCallback.onWalletReceive(v);
+            isFabOpen = false;
+        } else if (id == R.id.fabImport) {
+            animateFAB();
+            activityCallback.onSendRequest(v);
+        }  else if (id == R.id.fabScreen) {
+            animateFAB();
+        }
+    }
+
+    public boolean isFabOpen() {
+        return isFabOpen;
+    }
+
+    public void animateFAB() {
+        if (isFabOpen) { // close the fab
+            fabScreen.setClickable(false);
+            fabScreen.startAnimation(fab_close_screen);
+            fab.startAnimation(rotate_backward);
+            fabNewL.startAnimation(fab_close);
+            fabNew.setClickable(false);
+            fabImportL.startAnimation(fab_close);
+            fabImport.setClickable(false);
+            isFabOpen = false;
+        } else { // open the fab
+            fabScreen.setClickable(true);
+            fabScreen.startAnimation(fab_open_screen);
+            fab.startAnimation(rotate_forward);
+            fabNewL.setVisibility(View.VISIBLE);
+            fabImportL.setVisibility(View.VISIBLE);
+
+            fabNewL.startAnimation(fab_open);
+            fabNew.setClickable(true);
+            fabImportL.startAnimation(fab_open);
+            fabImport.setClickable(true);
+            isFabOpen = true;
+        }
     }
 
     void showBalance(String balance) {
@@ -181,7 +241,6 @@ public class WalletFragment extends Fragment
             llBalance.setVisibility(View.INVISIBLE);
             tvStreetView.setVisibility(View.VISIBLE);
         }
-        setStreetModeBackground(streetMode);
     }
 
     void showUnconfirmed(double unconfirmedAmount) {
@@ -240,16 +299,16 @@ public class WalletFragment extends Fragment
 
     public void onSynced() {
         if (!activityCallback.isWatchOnly()) {
-            bSend.setVisibility(View.VISIBLE);
-            bSend.setEnabled(true);
+            fabImport.setVisibility(View.VISIBLE);
+            fabImport.setEnabled(true);
         }
         if (isVisible()) enableAccountsList(true); //otherwise it is enabled in onResume()
     }
 
     public void unsync() {
         if (!activityCallback.isWatchOnly()) {
-            bSend.setVisibility(View.INVISIBLE);
-            bSend.setEnabled(false);
+            fabImport.setVisibility(View.INVISIBLE);
+            fabImport.setEnabled(false);
         }
         if (isVisible()) enableAccountsList(false); //otherwise it is enabled in onResume()
         firstBlock = 0;
@@ -264,8 +323,8 @@ public class WalletFragment extends Fragment
 
     private void showReceive() {
         if (walletLoaded) {
-            bReceive.setVisibility(View.VISIBLE);
-            bReceive.setEnabled(true);
+            fabNew.setVisibility(View.VISIBLE);
+            fabNew.setEnabled(true);
         }
     }
 
@@ -423,15 +482,5 @@ public class WalletFragment extends Fragment
         if (activityCallback instanceof DrawerLocker) {
             ((DrawerLocker) activityCallback).setDrawerEnabled(enable);
         }
-    }
-
-    public void setStreetModeBackground(boolean enable) {
-        //TODO figure out why gunther disappears on return from send although he is still set
-        if (enable) {
-            if (streetGunther == null)
-                streetGunther = ContextCompat.getDrawable(requireContext(), R.drawable.ic_gunther_streetmode);
-            ivStreetGunther.setImageDrawable(streetGunther);
-        } else
-            ivStreetGunther.setImageDrawable(null);
     }
 }

@@ -7,7 +7,6 @@
 
     <string-array name="themes_values">
         <item>Classic</item>
-        <item>Oled</item>
     </string-array>
 
 </resources>

@@ -8,36 +8,6 @@
         <item name="materialButtonStyle">@style/AppButton</item>
     </style>
 
-    <style name="MyMaterialThemeOled" parent="MyMaterialTheme">
-        <item name="toolbarTextColor">@color/oled_toolbarTextColor</item>
-        <item name="gradientTopColor">@color/oled_gradientTopColor</item>
-        <item name="gradientBottomColor">@color/oled_gradientBottomColor</item>
-        <item name="favouriteColor">@color/oled_favouriteColor</item>
-        <item name="softFavouriteColor">@color/oled_softFavouriteColor</item>
-        <item name="positiveColor">@color/oled_positiveColor</item>
-        <item name="negativeColor">@color/oled_negativeColor</item>
-        <item name="neutralColor">@color/oled_neutralColor</item>
-        <item name="streetColorA">@color/oled_streetColorA</item>
-        <item name="streetColorB">@color/oled_streetColorB</item>
-        <item name="noticeColor">@color/oled_noticeColor</item>
-        <item name="colorPrimary">@color/oled_colorPrimary</item>
-        <item name="colorPrimaryVariant">@color/oled_colorPrimaryVariant</item>
-        <item name="colorOnPrimary">@color/oled_colorOnPrimary</item>
-        <item name="colorSecondary">@color/oled_colorSecondary</item>
-        <item name="colorSecondaryVariant">@color/oled_colorSecondaryVariant</item>
-        <item name="colorOnSecondary">@color/oled_colorOnSecondary</item>
-        <item name="colorError">@color/oled_colorError</item>
-        <item name="colorOnError">@color/oled_colorOnError</item>
-        <item name="colorSurface">@color/oled_colorSurface</item>
-        <item name="colorOnSurface">@color/oled_colorOnSurface</item>
-        <item name="android:colorBackground">@color/oled_colorBackground</item>
-        <item name="colorOnBackground">@color/oled_colorOnBackground</item>
-        <item name="android:statusBarColor">@color/oled_statusBarColor</item>
-        <item name="android:navigationBarColor">@color/oled_navigationBarColor</item>
-        <item name="android:textColorPrimary">@color/oled_textColorPrimary</item>
-        <item name="android:textColorSecondary">@color/oled_textColorSecondary</item>
-    </style>
-
     <style name="MyMaterialThemeClassic" parent="MyMaterialTheme">
         <item name="toolbarTextColor">@color/classic_toolbarTextColor</item>
         <item name="gradientTopColor">@color/classic_gradientTopColor</item>

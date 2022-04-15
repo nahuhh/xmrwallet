@@ -1206,7 +1206,7 @@ public class WalletActivity extends BaseActivity implements WalletFragment.Liste
 
     @Override
     public Subaddress getLatestSubaddress() {
-        int lastUsedSubaddress = 1;
+        int lastUsedSubaddress = 0;
         for (TransactionInfo info : getWallet().getHistory().getAll()) {
             if (info.addressIndex > lastUsedSubaddress)
                 lastUsedSubaddress = info.addressIndex;

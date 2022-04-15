@@ -4,13 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/ivStreetGunther"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:scaleType="centerCrop" />
-
     <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -125,7 +118,6 @@
             android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/llAction"
             android:layout_below="@id/llHeader"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
@@ -133,57 +125,7 @@
             android:transitionGroup="true"
             app:layoutManager="LinearLayoutManager"
             tools:listitem="@layout/item_transaction" />
-
-        <LinearLayout
-            android:id="@+id/llAction"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:orientation="vertical">
-
-            <View
-                android:id="@+id/divider"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="?android:attr/listDivider" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:layout_marginLeft="4dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginRight="4dp"
-                android:layout_marginBottom="8dp"
-                android:orientation="horizontal"
-                android:weightSum="2">
-
-                <Button
-                    android:id="@+id/bReceive"
-                    style="@style/MoneroButton.Wallet"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_weight="1"
-                    android:enabled="false"
-                    android:text="@string/label_wallet_receive"
-                    app:icon="@drawable/ic_hand" />
-
-                <Button
-                    android:id="@+id/bSend"
-                    style="@style/MoneroButton.Wallet"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_weight="1"
-                    android:enabled="false"
-                    android:text="@string/label_wallet_send"
-                    app:icon="@drawable/ic_send" />
-            </LinearLayout>
-
-        </LinearLayout>
-
     </RelativeLayout>
+
+    <include layout="@layout/layout_wallet_fabmenu" />
 </FrameLayout>
