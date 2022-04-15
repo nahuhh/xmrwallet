@@ -19,21 +19,15 @@ package com.m2049r.xmrwallet;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -46,9 +40,6 @@ import com.github.brnunes.swipeablerecyclerview.SwipeableRecyclerViewTouchListen
 import com.m2049r.xmrwallet.layout.TransactionInfoAdapter;
 import com.m2049r.xmrwallet.model.TransactionInfo;
 import com.m2049r.xmrwallet.model.Wallet;
-import com.m2049r.xmrwallet.service.exchange.api.ExchangeApi;
-import com.m2049r.xmrwallet.service.exchange.api.ExchangeCallback;
-import com.m2049r.xmrwallet.service.exchange.api.ExchangeRate;
 import com.m2049r.xmrwallet.util.Helper;
 import com.m2049r.xmrwallet.util.ServiceHelper;
 import com.m2049r.xmrwallet.util.ThemeHelper;
@@ -68,7 +59,6 @@ public class WalletFragment extends Fragment
 
     private TextView tvStreetView;
     private LinearLayout llBalance;
-    private FrameLayout flExchange;
     private TextView tvBalance;
     private TextView tvUnconfirmedAmount;
     private TextView tvProgress;
@@ -79,8 +69,6 @@ public class WalletFragment extends Fragment
     private ImageView ivStreetGunther;
     private Drawable streetGunther = null;
     RecyclerView txlist;
-
-    private Spinner sCurrency;
 
     private final List<String> dismissedTransactions = new ArrayList<>();
 
@@ -109,7 +97,6 @@ public class WalletFragment extends Fragment
         ivStreetGunther = view.findViewById(R.id.ivStreetGunther);
         tvStreetView = view.findViewById(R.id.tvStreetView);
         llBalance = view.findViewById(R.id.llBalance);
-        flExchange = view.findViewById(R.id.flExchange);
         ((ProgressBar) view.findViewById(R.id.pbExchange)).getIndeterminateDrawable().
                 setColorFilter(
                         ThemeHelper.getThemedColor(getContext(), R.attr.colorPrimaryVariant),
@@ -122,15 +109,6 @@ public class WalletFragment extends Fragment
         tvUnconfirmedAmount = view.findViewById(R.id.tvUnconfirmedAmount);
         showUnconfirmed(0);
         ivSynced = view.findViewById(R.id.ivSynced);
-
-        sCurrency = view.findViewById(R.id.sCurrency);
-        List<String> currencies = new ArrayList<>();
-        currencies.add(Helper.BASE_CRYPTO);
-        if (Helper.SHOW_EXCHANGERATES)
-            currencies.addAll(Arrays.asList(getResources().getStringArray(R.array.currency)));
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(requireContext(), R.layout.item_spinner_balance, currencies);
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        sCurrency.setAdapter(spinnerAdapter);
 
         bSend = view.findViewById(R.id.bSend);
         bReceive = view.findViewById(R.id.bReceive);
@@ -179,18 +157,6 @@ public class WalletFragment extends Fragment
         bSend.setOnClickListener(v -> activityCallback.onSendRequest(v));
         bReceive.setOnClickListener(v -> activityCallback.onWalletReceive(v));
 
-        sCurrency.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                refreshBalance();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // nothing (yet?)
-            }
-        });
-
         if (activityCallback.isSynced()) {
             onSynced();
         }
@@ -206,7 +172,7 @@ public class WalletFragment extends Fragment
     }
 
     void showBalance(String balance) {
-        tvBalance.setText(balance);
+        tvBalance.setText(getResources().getString(R.string.xmr_confirmed_amount, balance));
         final boolean streetMode = activityCallback.isStreetMode();
         if (!streetMode) {
             llBalance.setVisibility(View.VISIBLE);
@@ -229,99 +195,11 @@ public class WalletFragment extends Fragment
         }
     }
 
-    void updateBalance() {
-        if (isExchanging) return; // wait for exchange to finish - it will fire this itself then.
-        // at this point selection is XMR in case of error
-        String displayB;
-        double amountA = Helper.getDecimalAmount(unlockedBalance).doubleValue();
-        if (!Helper.BASE_CRYPTO.equals(balanceCurrency)) { // not XMR
-            double amountB = amountA * balanceRate;
-            displayB = Helper.getFormattedAmount(amountB, false);
-        } else { // XMR
-            displayB = Helper.getFormattedAmount(amountA, true);
-        }
-        showBalance(displayB);
-    }
-
-    String balanceCurrency = Helper.BASE_CRYPTO;
-    double balanceRate = 1.0;
-
-    private final ExchangeApi exchangeApi = ServiceHelper.getExchangeApi();
-
     void refreshBalance() {
         double unconfirmedXmr = Helper.getDecimalAmount(balance - unlockedBalance).doubleValue();
         showUnconfirmed(unconfirmedXmr);
-        if (sCurrency.getSelectedItemPosition() == 0) { // XMR
-            double amountXmr = Helper.getDecimalAmount(unlockedBalance).doubleValue();
-            showBalance(Helper.getFormattedAmount(amountXmr, true));
-        } else { // not XMR
-            String currency = (String) sCurrency.getSelectedItem();
-            Timber.d(currency);
-            if (!currency.equals(balanceCurrency) || (balanceRate <= 0)) {
-                showExchanging();
-                exchangeApi.queryExchangeRate(Helper.BASE_CRYPTO, currency,
-                        new ExchangeCallback() {
-                            @Override
-                            public void onSuccess(final ExchangeRate exchangeRate) {
-                                if (isAdded())
-                                    new Handler(Looper.getMainLooper()).post(() -> exchange(exchangeRate));
-                            }
-
-                            @Override
-                            public void onError(final Exception e) {
-                                Timber.e(e.getLocalizedMessage());
-                                if (isAdded())
-                                    new Handler(Looper.getMainLooper()).post(() -> exchangeFailed());
-                            }
-                        });
-            } else {
-                updateBalance();
-            }
-        }
-    }
-
-    boolean isExchanging = false;
-
-    void showExchanging() {
-        isExchanging = true;
-        tvBalance.setVisibility(View.GONE);
-        flExchange.setVisibility(View.VISIBLE);
-        sCurrency.setEnabled(false);
-    }
-
-    void hideExchanging() {
-        isExchanging = false;
-        tvBalance.setVisibility(View.VISIBLE);
-        flExchange.setVisibility(View.GONE);
-        sCurrency.setEnabled(true);
-    }
-
-    public void exchangeFailed() {
-        sCurrency.setSelection(0, true); // default to XMR
         double amountXmr = Helper.getDecimalAmount(unlockedBalance).doubleValue();
         showBalance(Helper.getFormattedAmount(amountXmr, true));
-        hideExchanging();
-    }
-
-    public void exchange(final ExchangeRate exchangeRate) {
-        hideExchanging();
-        if (!Helper.BASE_CRYPTO.equals(exchangeRate.getBaseCurrency())) {
-            Timber.e("Not XMR");
-            sCurrency.setSelection(0, true);
-            balanceCurrency = Helper.BASE_CRYPTO;
-            balanceRate = 1.0;
-        } else {
-            int spinnerPosition = ((ArrayAdapter) sCurrency.getAdapter()).getPosition(exchangeRate.getQuoteCurrency());
-            if (spinnerPosition < 0) { // requested currency not in list
-                Timber.e("Requested currency not in list %s", exchangeRate.getQuoteCurrency());
-                sCurrency.setSelection(0, true);
-            } else {
-                sCurrency.setSelection(spinnerPosition, true);
-            }
-            balanceCurrency = exchangeRate.getQuoteCurrency();
-            balanceRate = exchangeRate.getRate();
-        }
-        updateBalance();
     }
 
     // Callbacks from TransactionInfoAdapter

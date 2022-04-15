@@ -17,27 +17,15 @@
 package com.m2049r.xmrwallet;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
-import android.nfc.NfcManager;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.Html;
-import android.text.InputType;
 import android.text.Spanned;
-import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -46,10 +34,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.material.textfield.TextInputLayout;
 import com.google.android.material.transition.MaterialContainerTransform;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -63,12 +49,8 @@ import com.m2049r.xmrwallet.data.Subaddress;
 import com.m2049r.xmrwallet.model.Wallet;
 import com.m2049r.xmrwallet.util.Helper;
 import com.m2049r.xmrwallet.util.ThemeHelper;
-import com.m2049r.xmrwallet.widget.ExchangeView;
 import com.m2049r.xmrwallet.widget.Toolbar;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -79,14 +61,8 @@ public class ReceiveFragment extends Fragment {
 
     private ProgressBar pbProgress;
     private TextView tvAddress;
-    private TextInputLayout etNotes;
-    private ExchangeView evAmount;
-    private TextView tvQrCode;
     private ImageView ivQrCode;
-    private ImageView ivQrCodeFull;
-    private EditText etDummy;
     private ImageButton bCopyAddress;
-    private MenuItem shareItem;
 
     private Wallet wallet = null;
     private boolean isMyWallet = false;
@@ -100,7 +76,11 @@ public class ReceiveFragment extends Fragment {
 
         void showSubaddresses(boolean managerMode);
 
-        Subaddress getSelectedSubaddress();
+        Subaddress getSubaddress(int index);
+
+        Subaddress getManuallySelectedAddress();
+
+        Subaddress getLatestSubaddress();
     }
 
     @Override
@@ -111,74 +91,14 @@ public class ReceiveFragment extends Fragment {
 
         pbProgress = view.findViewById(R.id.pbProgress);
         tvAddress = view.findViewById(R.id.tvAddress);
-        etNotes = view.findViewById(R.id.etNotes);
-        evAmount = view.findViewById(R.id.evAmount);
         ivQrCode = view.findViewById(R.id.qrCode);
-        tvQrCode = view.findViewById(R.id.tvQrCode);
-        ivQrCodeFull = view.findViewById(R.id.qrCodeFull);
-        etDummy = view.findViewById(R.id.etDummy);
         bCopyAddress = view.findViewById(R.id.bCopyAddress);
 
-        etDummy.setRawInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
         bCopyAddress.setOnClickListener(v -> copyAddress());
 
-        evAmount.setOnNewAmountListener(xmr -> {
-            Timber.d("new amount = %s", xmr);
-            generateQr();
-            if (shareRequested && (xmr != null)) share();
-        });
-
-        evAmount.setOnFailedExchangeListener(() -> {
-            if (isAdded()) {
-                clearQR();
-                Toast.makeText(getActivity(), getString(R.string.message_exchange_failed), Toast.LENGTH_LONG).show();
-            }
-        });
-
-        final EditText notesEdit = etNotes.getEditText();
-        notesEdit.setRawInputType(InputType.TYPE_CLASS_TEXT);
-        notesEdit.setOnEditorActionListener((v, actionId, event) -> {
-            if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) && (event.getAction() == KeyEvent.ACTION_DOWN))
-                    || (actionId == EditorInfo.IME_ACTION_DONE)) {
-                generateQr();
-                return true;
-            }
-            return false;
-        });
-        notesEdit.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                clearQR();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
-
         tvAddress.setOnClickListener(v -> {
             listenerCallback.showSubaddresses(false);
-        });
-
-        view.findViewById(R.id.cvQrCode).setOnClickListener(v -> {
-            Helper.hideKeyboard(getActivity());
-            etDummy.requestFocus();
-            if (qrValid) {
-                ivQrCodeFull.setImageBitmap(((BitmapDrawable) ivQrCode.getDrawable()).getBitmap());
-                ivQrCodeFull.setVisibility(View.VISIBLE);
-            } else {
-                evAmount.doExchange();
-            }
-        });
-
-        ivQrCodeFull.setOnClickListener(v -> {
-            ivQrCodeFull.setImageBitmap(null);
-            ivQrCodeFull.setVisibility(View.GONE);
         });
 
         showProgress();
@@ -190,11 +110,6 @@ public class ReceiveFragment extends Fragment {
         } else {
             throw new IllegalStateException("no wallet info");
         }
-
-        View tvNfc = view.findViewById(R.id.tvNfc);
-        NfcManager manager = (NfcManager) getContext().getSystemService(Context.NFC_SERVICE);
-        if ((manager != null) && (manager.getDefaultAdapter() != null))
-            tvNfc.setVisibility(View.VISIBLE);
 
         return view;
     }
@@ -210,76 +125,6 @@ public class ReceiveFragment extends Fragment {
         setSharedElementEnterTransition(transform);
     }
 
-    private boolean shareRequested = false;
-
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, final MenuInflater inflater) {
-        inflater.inflate(R.menu.receive_menu, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-
-        shareItem = menu.findItem(R.id.menu_item_share);
-        shareItem.setOnMenuItemClickListener(item -> {
-            if (shareRequested) return true;
-            shareRequested = true;
-            if (!qrValid) {
-                evAmount.doExchange();
-            } else {
-                share();
-            }
-            return true;
-        });
-    }
-
-    private void share() {
-        shareRequested = false;
-        if (saveQrCode()) {
-            final Intent sendIntent = getSendIntent();
-            if (sendIntent != null)
-                startActivity(Intent.createChooser(sendIntent, null));
-        } else {
-            Toast.makeText(getActivity(), getString(R.string.message_qr_failed), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private boolean saveQrCode() {
-        if (!qrValid) throw new IllegalStateException("trying to save null qr code!");
-
-        File cachePath = new File(getActivity().getCacheDir(), "images");
-        if (!cachePath.exists())
-            if (!cachePath.mkdirs()) throw new IllegalStateException("cannot create images folder");
-        File png = new File(cachePath, "QR.png");
-        try {
-            FileOutputStream stream = new FileOutputStream(png);
-            Bitmap qrBitmap = ((BitmapDrawable) ivQrCode.getDrawable()).getBitmap();
-            qrBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-            stream.close();
-            return true;
-        } catch (IOException ex) {
-            Timber.e(ex);
-            // make sure we don't share an old qr code
-            if (!png.delete()) throw new IllegalStateException("cannot delete old qr code");
-            // if we manage to delete it, the URI points to nothing and the user gets a toast with the error
-        }
-        return false;
-    }
-
-    private Intent getSendIntent() {
-        File imagePath = new File(requireActivity().getCacheDir(), "images");
-        File png = new File(imagePath, "QR.png");
-        Uri contentUri = FileProvider.getUriForFile(requireActivity(), BuildConfig.APPLICATION_ID + ".fileprovider", png);
-        if (contentUri != null) {
-            Intent shareIntent = new Intent();
-            shareIntent.setAction(Intent.ACTION_SEND);
-            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION); // temp permission for receiving app to read this file
-            shareIntent.setTypeAndNormalize("image/png");
-            shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
-            if (bcData != null)
-                shareIntent.putExtra(Intent.EXTRA_TEXT, bcData.getUriString());
-            return shareIntent;
-        }
-        return null;
-    }
-
     void copyAddress() {
         Helper.clipBoardCopy(requireActivity(), getString(R.string.label_copy_address), subaddress.getAddress());
         Toast.makeText(getActivity(), getString(R.string.message_copy_address), Toast.LENGTH_SHORT).show();
@@ -291,15 +136,12 @@ public class ReceiveFragment extends Fragment {
         if (qrValid) {
             ivQrCode.setImageBitmap(null);
             qrValid = false;
-            if (isLoaded)
-                tvQrCode.setVisibility(View.VISIBLE);
         }
     }
 
     void setQR(Bitmap qr) {
         ivQrCode.setImageBitmap(qr);
         qrValid = true;
-        tvQrCode.setVisibility(View.GONE);
     }
 
     @Override
@@ -337,21 +179,16 @@ public class ReceiveFragment extends Fragment {
     private void generateQr() {
         Timber.d("GENQR");
         String address = subaddress.getAddress();
-        String notes = etNotes.getEditText().getText().toString();
-        String xmrAmount = evAmount.getAmount();
-        Timber.d("%s/%s/%s", xmrAmount, notes, address);
-        if ((xmrAmount == null) || !Wallet.isAddressValid(address)) {
+        if (!Wallet.isAddressValid(address)) {
             clearQR();
             Timber.d("CLEARQR");
             return;
         }
-        bcData = new BarcodeData(Crypto.XMR, address, notes, xmrAmount);
-        int size = Math.max(ivQrCode.getWidth(), ivQrCode.getHeight());
-        Bitmap qr = generate(bcData.getUriString(), size, size);
+        bcData = new BarcodeData(Crypto.XMR, address, "", "");
+        Bitmap qr = generate(bcData.getUriString(), 512, 512);
         if (qr != null) {
             setQR(qr);
             Timber.d("SETQR");
-            etDummy.requestFocus();
             Helper.hideKeyboard(getActivity());
         }
     }
@@ -450,7 +287,13 @@ public class ReceiveFragment extends Fragment {
     private Subaddress subaddress = null;
 
     void setNewSubaddress() {
-        final Subaddress newSubaddress = listenerCallback.getSelectedSubaddress();
+        final Subaddress manualAddress = listenerCallback.getManuallySelectedAddress();
+        Subaddress newSubaddress = null;
+        if(manualAddress != null) {
+            newSubaddress = manualAddress;
+        } else {
+            newSubaddress = listenerCallback.getLatestSubaddress();
+        }
         if (!Objects.equals(subaddress, newSubaddress)) {
             final Runnable resetSize = () -> tvAddress.animate().setDuration(125).scaleX(1).scaleY(1).start();
             tvAddress.animate().alpha(1).setDuration(125)

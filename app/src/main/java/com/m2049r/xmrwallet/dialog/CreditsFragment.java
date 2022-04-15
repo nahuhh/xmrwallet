@@ -53,7 +53,7 @@ public class CreditsFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_credits, null);
 
-        ((TextView) view.findViewById(R.id.tvCredits)).setText(Html.fromHtml(getString(R.string.credits_text)));
+        ((TextView) view.findViewById(R.id.tvCredits)).setText(Html.fromHtml(getString(R.string.credits_text_new)));
 
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getActivity())
                 .setView(view)

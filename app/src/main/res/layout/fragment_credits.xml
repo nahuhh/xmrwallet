@@ -24,7 +24,7 @@
             android:layout_marginTop="@dimen/header_top"
             android:autoLink="web"
             android:gravity="center"
-            android:text="@string/credits_text" />
+            android:text="@string/credits_text_new" />
 
     </LinearLayout>
 </ScrollView>

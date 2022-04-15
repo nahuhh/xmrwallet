@@ -1190,11 +1190,28 @@ public class WalletActivity extends BaseActivity implements WalletFragment.Liste
 
     // we store the index only and always retrieve a new Subaddress object
     // to ensure we get the current label
-    private int selectedSubaddressIndex = 0;
+    private int selectedSubaddressIndex = -1;
 
     @Override
-    public Subaddress getSelectedSubaddress() {
-        return getWallet().getSubaddressObject(selectedSubaddressIndex);
+    public Subaddress getSubaddress(int index) {
+        return getWallet().getSubaddressObject(index);
+    }
+
+    @Nullable
+    @Override
+    public Subaddress getManuallySelectedAddress() {
+        if(selectedSubaddressIndex == -1) return null;
+        return getSubaddress(selectedSubaddressIndex);
+    }
+
+    @Override
+    public Subaddress getLatestSubaddress() {
+        int lastUsedSubaddress = 1;
+        for (TransactionInfo info : getWallet().getHistory().getAll()) {
+            if (info.addressIndex > lastUsedSubaddress)
+                lastUsedSubaddress = info.addressIndex;
+        }
+        return getWallet().getSubaddressObject(lastUsedSubaddress);
     }
 
     @Override

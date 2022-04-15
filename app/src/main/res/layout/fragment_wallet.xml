@@ -76,15 +76,6 @@
                         android:gravity="center"
                         android:visibility="visible"
                         tools:text="1099700.23001" />
-
-                    <Spinner
-                        android:id="@+id/sCurrency"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:entries="@array/currency"
-                        android:gravity="center"
-                        tools:listitem="@layout/item_spinner_balance" />
                 </LinearLayout>
             </FrameLayout>
 
