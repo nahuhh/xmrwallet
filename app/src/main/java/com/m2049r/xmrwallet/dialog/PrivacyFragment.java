@@ -53,7 +53,7 @@ public class PrivacyFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_privacy_policy, null);
 
-        ((TextView) view.findViewById(R.id.tvCredits)).setText(Html.fromHtml(getString(R.string.privacy_policy)));
+        ((TextView) view.findViewById(R.id.tvCredits)).setText(Html.fromHtml(getString(R.string.privacy_policy_new)));
 
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getActivity())
                 .setView(view)

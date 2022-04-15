@@ -190,6 +190,7 @@ public class NodeInfo extends Node {
     }
 
     public boolean testRpcService(NodePinger.Listener listener) {
+        if(!this.isOnion()) return false;
         boolean result = testRpcService(rpcPort);
         if (listener != null)
             listener.publish(this);

@@ -129,7 +129,7 @@ public class LoginActivity extends BaseActivity
         if (favouriteNodes.isEmpty()) {
             for (DefaultNodes node : DefaultNodes.values()) {
                 NodeInfo nodeInfo = NodeInfo.fromString(node.getUri());
-                if (nodeInfo != null) {
+                if (nodeInfo != null && nodeInfo.isOnion()) {
                     nodeInfo.setFavourite(true);
                     favouriteNodes.add(nodeInfo);
                 }
@@ -145,7 +145,7 @@ public class LoginActivity extends BaseActivity
         favouriteNodes.clear();
         for (NodeInfo node : nodes) {
             Timber.d("adding %s %b", node, node.isFavourite());
-            if (node.isFavourite())
+            if (node.isFavourite() && node.isOnion())
                 favouriteNodes.add(node);
         }
         saveFavourites();
@@ -167,7 +167,7 @@ public class LoginActivity extends BaseActivity
             if (nodeEntry != null) { // just in case, ignore possible future errors
                 final String nodeId = (String) nodeEntry.getValue();
                 final NodeInfo addedNode = addFavourite(nodeId);
-                if (addedNode != null) {
+                if (addedNode != null && addedNode.isOnion()) {
                     if (nodeId.equals(selectedNodeId)) {
                         addedNode.setSelected(true);
                     }
@@ -201,17 +201,19 @@ public class LoginActivity extends BaseActivity
         editor.clear();
         int i = 1;
         for (Node info : favouriteNodes) {
-            final String nodeString = info.toNodeString();
-            editor.putString(Integer.toString(i), nodeString);
-            Timber.d("saved %d:%s", i, nodeString);
-            i++;
+            if(info.isOnion()) {
+                final String nodeString = info.toNodeString();
+                editor.putString(Integer.toString(i), nodeString);
+                Timber.d("saved %d:%s", i, nodeString);
+                i++;
+            }
         }
         editor.apply();
     }
 
     private NodeInfo addFavourite(String nodeString) {
         final NodeInfo nodeInfo = NodeInfo.fromString(nodeString);
-        if (nodeInfo != null) {
+        if (nodeInfo != null && nodeInfo.isOnion()) {
             nodeInfo.setFavourite(true);
             favouriteNodes.add(nodeInfo);
         } else
@@ -230,7 +232,7 @@ public class LoginActivity extends BaseActivity
     private void saveSelectedNode() { // save only if changed
         final NodeInfo nodeInfo = getNode();
         final String selectedNodeId = getSelectedNodeId();
-        if (nodeInfo != null) {
+        if (nodeInfo != null && nodeInfo.isOnion()) {
             if (!nodeInfo.toNodeString().equals(selectedNodeId))
                 saveSelectedNode(nodeInfo);
         } else {

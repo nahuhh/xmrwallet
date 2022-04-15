@@ -24,7 +24,7 @@
             android:layout_marginTop="@dimen/header_top"
             android:autoLink="web"
             android:gravity="start"
-            android:text="@string/privacy_policy"
+            android:text="@string/privacy_policy_new"
             android:textSize="14sp" />
 
     </LinearLayout>

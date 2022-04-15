@@ -114,19 +114,6 @@ public class NetCipherHelper implements StatusCallback {
         }
     }
 
-    private void createClearnetClient() {
-        try {
-            client = new OkHttpClient.Builder()
-                    .connectTimeout(HTTP_TIMEOUT, TimeUnit.MILLISECONDS)
-                    .writeTimeout(HTTP_TIMEOUT, TimeUnit.MILLISECONDS)
-                    .readTimeout(HTTP_TIMEOUT, TimeUnit.MILLISECONDS)
-                    .build();
-            Helper.ALLOW_SHIFT = true;
-        } catch (Exception ex) {
-            throw new IllegalStateException(ex);
-        }
-    }
-
     private OnStatusChangedListener onStatusChangedListener;
 
     public static void deregister() {
@@ -186,7 +173,6 @@ public class NetCipherHelper implements StatusCallback {
     @Override
     public void onDisabled() {
         Timber.d("onDisabled");
-        createClearnetClient();
         status = Status.DISABLED;
         if (onStatusChangedListener != null) {
             new Thread(() -> onStatusChangedListener.disconnected()).start();
@@ -196,7 +182,6 @@ public class NetCipherHelper implements StatusCallback {
     @Override
     public void onStatusTimeout() {
         Timber.d("onStatusTimeout");
-        createClearnetClient();
         // (timeout does not not change the status)
         if (onStatusChangedListener != null) {
             new Thread(() -> onStatusChangedListener.disconnected()).start();
@@ -209,7 +194,6 @@ public class NetCipherHelper implements StatusCallback {
         Timber.d("onNotYetInstalled");
         // never mind then
         orbot.removeStatusCallback(this);
-        createClearnetClient();
         status = Status.NOT_INSTALLED;
         if (onStatusChangedListener != null) {
             new Thread(() -> onStatusChangedListener.notInstalled()).start();
@@ -219,9 +203,6 @@ public class NetCipherHelper implements StatusCallback {
     // user has not enabled background Orbot starts
     public void onNotEnabled() {
         Timber.d("onNotEnabled");
-        // keep the callback in case they turn it on manually
-        setTorPref(Status.DISABLED);
-        createClearnetClient();
         status = Status.NOT_ENABLED;
         if (onStatusChangedListener != null) {
             new Thread(() -> onStatusChangedListener.notEnabled()).start();
@@ -362,7 +343,7 @@ public class NetCipherHelper implements StatusCallback {
     private Status getTorPref() {
         if (currentPref != Status.UNKNOWN) return currentPref;
         currentPref = Status.valueOf(context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-                .getString(PREFS_STATUS, "DISABLED"));
+                .getString(PREFS_STATUS, "ENABLED"));
         return currentPref;
     }
 

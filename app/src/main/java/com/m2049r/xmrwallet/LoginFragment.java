@@ -449,7 +449,7 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
                     selectedNode = null; // it's not in the favourites (any longer)
                 if (selectedNode == null)
                     for (NodeInfo node : favourites) {
-                        if (node.isSelected()) {
+                        if (node.isSelected() && node.isOnion()) {
                             selectedNode = node;
                             break;
                         }
@@ -460,7 +460,7 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
                     selectedNode.testRpcService();
                 }
             } else throw new IllegalStateException();
-            if ((selectedNode != null) && selectedNode.isValid()) {
+            if ((selectedNode != null) && selectedNode.isValid() && selectedNode.isOnion()) {
                 activityCallback.setNode(selectedNode);
                 return selectedNode;
             } else {
@@ -475,7 +475,7 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
             tvNodeName.setVisibility(View.VISIBLE);
             pbNetwork.setVisibility(View.INVISIBLE);
             ibNetwork.setClickable(netState);
-            if (result != null) {
+            if (result != null && result.isOnion()) {
                 Timber.d("found a good node %s", result.toString());
                 showNode(result);
             } else {
@@ -511,10 +511,6 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
             HelpFragment.display(requireActivity().getSupportFragmentManager(), R.string.help_tor);
         } else if (status == NetCipherHelper.Status.NOT_ENABLED) {
             Toast.makeText(getActivity(), getString(R.string.tor_enable_background), Toast.LENGTH_LONG).show();
-        } else {
-            pbNetwork.setVisibility(View.VISIBLE);
-            ibNetwork.setEnabled(false);
-            NetCipherHelper.getInstance().toggle();
         }
     }
 
