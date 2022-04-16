@@ -72,7 +72,7 @@ public class WalletFragment extends Fragment
 
     private boolean isFabOpen = false;
     private FloatingActionButton fab, fabNew, fabImport;
-    private RelativeLayout fabScreen;
+    private RelativeLayout fabScreen, fabBackground;
     private RelativeLayout fabNewL, fabImportL;
     private Animation fab_open, fab_close, rotate_forward, rotate_backward, fab_open_screen, fab_close_screen;
 
@@ -157,6 +157,7 @@ public class WalletFragment extends Fragment
                         }));
 
         fabScreen = view.findViewById(R.id.fabScreen);
+        fabBackground = view.findViewById(R.id.fabBackground);
         fab = view.findViewById(R.id.fab);
         fabNew = view.findViewById(R.id.fabNew);
         fabImport = view.findViewById(R.id.fabImport);
@@ -174,6 +175,7 @@ public class WalletFragment extends Fragment
         fabNew.setOnClickListener(this);
         fabImport.setOnClickListener(this);
         fabScreen.setOnClickListener(this);
+        fabBackground.setOnClickListener(this);
 
         if (activityCallback.isSynced()) {
             onSynced();
@@ -192,12 +194,13 @@ public class WalletFragment extends Fragment
             animateFAB();
         } else if (id == R.id.fabNew) {
             fabScreen.setVisibility(View.INVISIBLE);
+            fabBackground.setVisibility(View.INVISIBLE);
             activityCallback.onWalletReceive(v);
             isFabOpen = false;
         } else if (id == R.id.fabImport) {
             animateFAB();
             activityCallback.onSendRequest(v);
-        }  else if (id == R.id.fabScreen) {
+        }  else if (id == R.id.fabScreen || id == R.id.fabBackground) {
             animateFAB();
         }
     }
@@ -210,6 +213,8 @@ public class WalletFragment extends Fragment
         if (isFabOpen) { // close the fab
             fabScreen.setClickable(false);
             fabScreen.startAnimation(fab_close_screen);
+            fabBackground.setClickable(false);
+            fabBackground.startAnimation(fab_close_screen);
             fab.startAnimation(rotate_backward);
             fabNewL.startAnimation(fab_close);
             fabNew.setClickable(false);
@@ -219,6 +224,8 @@ public class WalletFragment extends Fragment
         } else { // open the fab
             fabScreen.setClickable(true);
             fabScreen.startAnimation(fab_open_screen);
+            fabBackground.setClickable(true);
+            fabBackground.startAnimation(fab_open_screen);
             fab.startAnimation(rotate_forward);
             fabNewL.setVisibility(View.VISIBLE);
             fabImportL.setVisibility(View.VISIBLE);

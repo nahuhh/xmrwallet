@@ -5,13 +5,19 @@
     android:layout_height="match_parent">
 
     <RelativeLayout
+        android:id="@+id/fabBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.93"
+        android:background="?android:attr/colorBackground"
+        android:visibility="invisible"/>
+
+    <RelativeLayout
         android:id="@+id/fabScreen"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/fabL"
         android:layout_alignEnd="@id/fabL"
-        android:alpha="0.93"
-        android:background="?android:attr/colorBackground"
         android:visibility="invisible">
 
         <RelativeLayout

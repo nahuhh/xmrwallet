@@ -72,7 +72,6 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
     private final List<WalletManager.WalletInfo> walletList = new ArrayList<>();
 
     private View tvGuntherSays;
-    private ImageView ivGunther;
 
     private Listener activityCallback;
 
@@ -152,8 +151,8 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
         View view = inflater.inflate(R.layout.fragment_login, container, false);
 
         tvGuntherSays = view.findViewById(R.id.tvGuntherSays);
-        ivGunther = view.findViewById(R.id.ivGunther);
         fabScreen = view.findViewById(R.id.fabScreen);
+        fabBackground = view.findViewById(R.id.fabBackground);
         fab = view.findViewById(R.id.fab);
         fabNew = view.findViewById(R.id.fabNew);
         fabView = view.findViewById(R.id.fabView);
@@ -184,6 +183,7 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
         fabImport.setOnClickListener(this);
         fabLedger.setOnClickListener(this);
         fabScreen.setOnClickListener(this);
+        fabBackground.setOnClickListener(this);
 
         RecyclerView recyclerView = view.findViewById(R.id.list);
         registerForContextMenu(recyclerView);
@@ -253,15 +253,9 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
         // deal with Gunther & FAB animation
         if (walletList.isEmpty()) {
             fab.startAnimation(fab_pulse);
-            if (ivGunther.getDrawable() == null) {
-                ivGunther.setImageResource(R.drawable.ic_emptygunther);
-                tvGuntherSays.setVisibility(View.VISIBLE);
-            }
+            tvGuntherSays.setVisibility(View.VISIBLE);
         } else {
             fab.clearAnimation();
-            if (ivGunther.getDrawable() != null) {
-                ivGunther.setImageDrawable(null);
-            }
             tvGuntherSays.setVisibility(View.GONE);
         }
 
@@ -295,7 +289,7 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
 
     private boolean isFabOpen = false;
     private FloatingActionButton fab, fabNew, fabView, fabKey, fabSeed, fabImport, fabLedger;
-    private RelativeLayout fabScreen;
+    private RelativeLayout fabScreen, fabBackground;
     private RelativeLayout fabNewL, fabViewL, fabKeyL, fabSeedL, fabImportL, fabLedgerL;
     private Animation fab_open, fab_close, rotate_forward, rotate_backward, fab_open_screen, fab_close_screen;
     private Animation fab_pulse;
@@ -306,8 +300,10 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
 
     public void animateFAB() {
         if (isFabOpen) { // close the fab
+            fabBackground.setClickable(false);
             fabScreen.setClickable(false);
             fabScreen.startAnimation(fab_close_screen);
+            fabBackground.startAnimation(fab_close_screen);
             fab.startAnimation(rotate_backward);
             if (fabLedgerL.getVisibility() == View.VISIBLE) {
                 fabLedgerL.startAnimation(fab_close);
@@ -326,8 +322,10 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
             }
             isFabOpen = false;
         } else { // open the fab
+            fabBackground.setClickable(true);
             fabScreen.setClickable(true);
             fabScreen.startAnimation(fab_open_screen);
+            fabBackground.startAnimation(fab_open_screen);
             fab.startAnimation(rotate_forward);
             if (activityCallback.hasLedger()) {
                 fabLedgerL.setVisibility(View.VISIBLE);
@@ -370,6 +368,7 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
             animateFAB();
         } else if (id == R.id.fabNew) {
             fabScreen.setVisibility(View.INVISIBLE);
+            fabBackground.setVisibility(View.INVISIBLE);
             isFabOpen = false;
             activityCallback.onAddWallet(GenerateFragment.TYPE_NEW);
         } else if (id == R.id.fabView) {
@@ -388,7 +387,7 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
             Timber.d("FAB_LEDGER");
             animateFAB();
             activityCallback.onAddWallet(GenerateFragment.TYPE_LEDGER);
-        } else if (id == R.id.fabScreen) {
+        } else if (id == R.id.fabScreen || id == R.id.fabBackground) {
             animateFAB();
         }
     }
