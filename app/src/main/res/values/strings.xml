@@ -465,7 +465,7 @@
         <b>Please enter or scan a Monero address.</b>
     ]]></string>
 
-    <!-- order must be the same as in com.m2049r.xmrwallet.data.Crypto-->
+    <!-- order must be the same as in one.m2049r.xmrwallet.data.Crypto-->
     <string-array name="cryptos" translatable="false">
         <item>Monero</item>
         <item>Bitcoin</item>

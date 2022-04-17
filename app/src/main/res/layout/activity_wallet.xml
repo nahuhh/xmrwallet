@@ -12,7 +12,7 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
-        <com.m2049r.xmrwallet.widget.Toolbar
+        <one.mayumi.xmrwallet.widget.Toolbar
             android:id="@+id/toolbar"
             style="@style/MonerujoToolbar"
             android:layout_width="match_parent"

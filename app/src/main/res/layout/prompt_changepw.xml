@@ -10,7 +10,7 @@
         android:orientation="vertical"
         android:padding="8dp">
 
-        <com.m2049r.xmrwallet.widget.PasswordEntryView
+        <one.mayumi.xmrwallet.widget.PasswordEntryView
             android:id="@+id/etWalletPasswordA"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
@@ -29,7 +29,7 @@
                 android:imeOptions="actionNext"
                 android:inputType="textVisiblePassword"
                 android:textAlignment="textStart" />
-        </com.m2049r.xmrwallet.widget.PasswordEntryView>
+        </one.mayumi.xmrwallet.widget.PasswordEntryView>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/etWalletPasswordB"
