@@ -21,8 +21,8 @@ import one.mayumi.levin.data.Section;
 import one.mayumi.levin.util.HexHelper;
 import one.mayumi.levin.util.LittleEndianDataInputStream;
 import one.mayumi.levin.util.LittleEndianDataOutputStream;
-import one.mayumi.xmrwallet.data.NodeInfo;
-import one.mayumi.xmrwallet.util.Helper;
+import one.mayumi.shruum.data.NodeInfo;
+import one.mayumi.shruum.util.Helper;
 
 import java.io.DataInput;
 import java.io.DataOutput;

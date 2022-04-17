@@ -33,7 +33,7 @@
             android:visibility="visible" />
     </RelativeLayout>
 
-    <one.mayumi.xmrwallet.widget.ExchangeEditText
+    <one.mayumi.shruum.widget.ExchangeEditText
         android:id="@+id/etAmount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

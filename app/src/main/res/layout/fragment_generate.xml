@@ -28,7 +28,7 @@
                 android:textAlignment="textStart" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <one.mayumi.xmrwallet.widget.PasswordEntryView
+        <one.mayumi.shruum.widget.PasswordEntryView
             android:id="@+id/etWalletPassword"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
@@ -46,7 +46,7 @@
                 android:inputType="textVisiblePassword"
                 android:textAlignment="textStart" />
 
-        </one.mayumi.xmrwallet.widget.PasswordEntryView>
+        </one.mayumi.shruum.widget.PasswordEntryView>
 
         <LinearLayout
             android:id="@+id/llFingerprintAuth"

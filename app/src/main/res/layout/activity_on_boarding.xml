@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="one.mayumi.xmrwallet.onboarding.OnBoardingActivity"
+    tools:context="one.mayumi.shruum.onboarding.OnBoardingActivity"
     tools:layout_editor_absoluteY="25dp">
 
     <Button
@@ -22,7 +22,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <one.mayumi.xmrwallet.onboarding.OnBoardingViewPager
+    <one.mayumi.shruum.onboarding.OnBoardingViewPager
         android:id="@+id/pager"
         android:layout_width="0dp"
         android:layout_height="0dp"

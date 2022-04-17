@@ -16,7 +16,7 @@
 
 package one.mayumi.levin.scanner;
 
-import one.mayumi.xmrwallet.data.NodeInfo;
+import one.mayumi.shruum.data.NodeInfo;
 
 import java.util.Collection;
 import java.util.HashSet;
