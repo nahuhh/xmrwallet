@@ -59,6 +59,7 @@ import one.mayumi.shruum.fragment.send.SendFragment;
 import one.mayumi.shruum.ledger.LedgerProgressDialog;
 import one.mayumi.shruum.model.PendingTransaction;
 import one.mayumi.shruum.model.TransactionInfo;
+import one.mayumi.shruum.model.Transfer;
 import one.mayumi.shruum.model.Wallet;
 import one.mayumi.shruum.model.WalletManager;
 import one.mayumi.shruum.service.WalletService;
@@ -68,6 +69,7 @@ import one.mayumi.shruum.util.ThemeHelper;
 import one.mayumi.shruum.widget.Toolbar;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import timber.log.Timber;
@@ -102,6 +104,8 @@ public class WalletActivity extends BaseActivity implements WalletFragment.Liste
     private String uri = null;
 
     private long streetMode = 0;
+
+    private HashMap<String, Integer> subAddresses = new HashMap<>();
 
     @Override
     public void onPasswordChanged(String newPassword) {
@@ -1207,12 +1211,37 @@ public class WalletActivity extends BaseActivity implements WalletFragment.Liste
     @Override
     public Subaddress getLatestSubaddress() {
         int lastUsedSubaddress = 0;
+        HashMap<String, Integer> subAddresses = getSubAddresses();
         for (TransactionInfo info : getWallet().getHistory().getAll()) {
-            if (info.addressIndex > lastUsedSubaddress)
-                lastUsedSubaddress = info.addressIndex;
+            if(info.transfers != null) {
+                for(Transfer transfer : info.transfers) {
+                    if(subAddresses.containsKey(transfer.address)) {
+                        int subAddressIndex = subAddresses.get(transfer.address);
+                        if(subAddressIndex > lastUsedSubaddress) {
+                            lastUsedSubaddress = subAddressIndex;
+                        }
+                    }
+                }
+            } else {
+                if(info.addressIndex > lastUsedSubaddress) {
+                    lastUsedSubaddress = info.addressIndex;
+                }
+            }
         }
         lastUsedSubaddress++;
         return getWallet().getSubaddressObject(lastUsedSubaddress);
+    }
+
+    private HashMap<String, Integer> getSubAddresses() {
+        int subAddressCount = getWallet().getNumSubaddresses();
+        if(subAddresses.size() != subAddressCount) {
+            for (int i = 0; i < subAddressCount; i++) {
+                if(!subAddresses.containsValue(i)) {
+                    subAddresses.put(getWallet().getSubaddress(i), i);
+                }
+            }
+        }
+        return subAddresses;
     }
 
     @Override
