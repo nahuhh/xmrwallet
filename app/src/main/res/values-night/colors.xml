@@ -9,10 +9,10 @@
     <color name="classic_streetColorA">#4E018A</color>
     <color name="classic_streetColorB">#87009F</color>
     <color name="classic_toolbarTextColor">#ffffff</color>
-    <color name="classic_favouriteColor">@color/classic_negativeColor</color>
-    <color name="classic_softFavouriteColor">@color/classic_negativeColor</color>
+    <color name="classic_favouriteColor">@color/classic_colorSecondary</color>
+    <color name="classic_softFavouriteColor">@color/classic_statusBarColor</color>
     <color name="classic_positiveColor">#27C79C</color>
-    <color name="classic_negativeColor">#8543FF</color>
+    <color name="classic_negativeColor">#B31A1A</color>
     <color name="classic_neutralColor">#ffffff</color>
     <color name="classic_noticeColor">#FFAB1A</color>
     <color name="classic_navigationBarColor">@color/classic_colorBackground</color>
@@ -23,10 +23,10 @@
     <color name="classic_colorPrimary">#FFF6EF</color>
     <color name="classic_colorPrimaryVariant">#CCC3BD</color>
     <color name="classic_colorOnPrimary">@color/classic_colorBackground</color>
-    <color name="classic_colorSecondary">@color/classic_negativeColor</color>
+    <color name="classic_colorSecondary">#ff6600</color>
     <color name="classic_colorSecondaryVariant">#F6FFEF</color>
     <color name="classic_colorOnSecondary">@color/classic_colorBackground</color>
-    <color name="classic_colorError">@color/classic_negativeColor</color>
+    <color name="classic_colorError">@color/classic_colorSecondary</color>
     <color name="classic_colorOnError">#FFF6EF</color>
 
     <color name="offForeground">#FFF6EF</color>

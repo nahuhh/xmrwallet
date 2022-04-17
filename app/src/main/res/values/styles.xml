@@ -204,7 +204,7 @@
     </style>
 
     <style name="MoneroText.Label.Subaddress">
-        <item name="android:background">?attr/positiveColor</item>
+        <item name="android:background">?attr/colorSecondary</item>
         <item name="android:textColor">?android:colorBackground</item>
     </style>
 

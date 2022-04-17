@@ -212,7 +212,7 @@ public class TxFragment extends Fragment {
         final Context ctx = getContext();
         Spanned label = Html.fromHtml(ctx.getString(R.string.tx_account_formatted,
                 info.accountIndex, info.addressIndex,
-                Integer.toHexString(ThemeHelper.getThemedColor(ctx, R.attr.positiveColor) & 0xFFFFFF),
+                Integer.toHexString(ThemeHelper.getThemedColor(ctx, R.attr.colorSecondary) & 0xFFFFFF),
                 Integer.toHexString(ThemeHelper.getThemedColor(ctx, android.R.attr.colorBackground) & 0xFFFFFF),
                 subaddress.getDisplayLabel()));
         tvAccount.setText(label);

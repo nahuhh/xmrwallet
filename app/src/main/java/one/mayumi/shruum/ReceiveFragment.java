@@ -302,7 +302,7 @@ public class ReceiveFragment extends Fragment {
         subaddress = newSubaddress;
         final Context context = getContext();
         Spanned label = Html.fromHtml(context.getString(R.string.receive_subaddress,
-                Integer.toHexString(ThemeHelper.getThemedColor(context, R.attr.positiveColor) & 0xFFFFFF),
+                Integer.toHexString(ThemeHelper.getThemedColor(context, R.attr.colorSecondary) & 0xFFFFFF),
                 Integer.toHexString(ThemeHelper.getThemedColor(context, android.R.attr.colorBackground) & 0xFFFFFF),
                 subaddress.getDisplayLabel(), subaddress.getAddress()));
         tvAddress.setText(label);
