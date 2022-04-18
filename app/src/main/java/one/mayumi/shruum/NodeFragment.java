@@ -383,13 +383,16 @@ public class NodeFragment extends Fragment
             if (host.isEmpty()) {
                 etNodeHost.setError(getString(R.string.node_host_empty));
                 return false;
+            } else if(!host.startsWith("http")) {
+                etNodeHost.setError("Must start with http:// or https://");
+                return false;
             } else if(!OrbotHelper.isOnionAddress(host)) {
                 etNodeHost.setError("Only v3 onions allowed!");
                 return false;
             }
             final boolean setHostSuccess = Helper.runWithNetwork(() -> {
                 try {
-                    nodeInfo.setHost(host);
+                    nodeInfo.setHost(host.replace("http://", "").replace("https://", ""));
                     return true;
                 } catch (UnknownHostException ex) {
                     return false;
