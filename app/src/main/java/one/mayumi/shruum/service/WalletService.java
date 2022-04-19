@@ -51,6 +51,7 @@ import timber.log.Timber;
 
 public class WalletService extends Service {
     public static boolean Running = false;
+    public static long timeoutTimestamp = 0;
 
     final static int NOTIFICATION_ID = 2049;
     final static String CHANNEL_ID = "m_service";
@@ -133,8 +134,15 @@ public class WalletService extends Service {
                             fullRefresh = true;
                         }
                     }
-                    if (observer != null)
+                    if (observer != null) {
                         observer.onRefreshed(wallet, fullRefresh);
+
+                        long currentTimestamp = System.currentTimeMillis() / 1000L;
+                        if(currentTimestamp >= timeoutTimestamp) {
+                            observer.onWalletClose();
+                            Timber.d("Closing wallet because of timeout.");
+                        }
+                    }
                 }
             }
         }
@@ -225,6 +233,8 @@ public class WalletService extends Service {
         void onWalletStarted(Wallet.Status walletStatus);
 
         void onWalletOpen(Wallet.Device device);
+
+        void onWalletClose();
     }
 
     String progressText = null;

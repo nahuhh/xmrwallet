@@ -91,7 +91,6 @@ public class WalletActivity extends BaseActivity implements WalletFragment.Liste
     public static final String REQUEST_FINGERPRINT_USED = "fingerprint";
     public static final String REQUEST_STREETMODE = "streetmode";
     public static final String REQUEST_URI = "uri";
-
     private NavigationView accountsView;
     private DrawerLayout drawer;
     private ActionBarDrawerToggle drawerToggle;
@@ -318,6 +317,19 @@ public class WalletActivity extends BaseActivity implements WalletFragment.Liste
         return true;
     }
 
+    @Override
+    public void onUserInteraction(){
+        super.onUserInteraction();
+        resetTimeoutTimer();
+    }
+
+    private void resetTimeoutTimer() {
+        Timber.d("Setting timeoutTimestamp...");
+        long cachedTimeoutTimestamp = WalletService.timeoutTimestamp;
+        WalletService.timeoutTimestamp = (System.currentTimeMillis() / 1000L) + 300;
+        Timber.d("Set timeoutTimestamp to " + WalletService.timeoutTimestamp + ", was " + cachedTimeoutTimestamp);
+    }
+
     private void updateStreetMode() {
         invalidateOptionsMenu();
     }
@@ -373,7 +385,7 @@ public class WalletActivity extends BaseActivity implements WalletFragment.Liste
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-
+        resetTimeoutTimer();
         toolbar.setOnButtonListener(new Toolbar.OnButtonListener() {
             @Override
             public void onButton(int type) {
@@ -628,6 +640,11 @@ public class WalletActivity extends BaseActivity implements WalletFragment.Liste
         if (device == Wallet.Device.Device_Ledger) {
             runOnUiThread(() -> showLedgerProgressDialog(LedgerProgressDialog.TYPE_RESTORE));
         }
+    }
+
+    @Override
+    public void onWalletClose() {
+        runOnUiThread(this::onBackPressed);
     }
 
     @Override
