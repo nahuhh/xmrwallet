@@ -207,7 +207,7 @@ public class NodeInfo extends Node {
     }
 
     private boolean testRpcService(int port) {
-        if(!this.isOnion()) return false;
+        if (!this.isOnion()) return false;
         Timber.d("Testing %s", toNodeString());
         clear();
         if (hostAddress.isOnion() && !NetCipherHelper.isTor()) {
@@ -215,35 +215,45 @@ public class NodeInfo extends Node {
             responseCode = 418; // I'm a teapot - or I need an Onion - who knows
             return false; // autofail
         }
-        try {
-            long ta = System.nanoTime();
-            try (Response response = rpcServiceRequest(port).execute()) {
-                Timber.d("%s: %s", response.code(), response.request().url());
-                responseTime = (System.nanoTime() - ta) / 1000000.0;
-                responseCode = response.code();
-                if (response.isSuccessful()) {
-                    ResponseBody respBody = response.body(); // closed through Response object
-                    if ((respBody != null) && (respBody.contentLength() < 2000)) { // sanity check
-                        final JSONObject json = new JSONObject(respBody.string());
-                        String rpcVersion = json.getString("jsonrpc");
-                        if (!RPC_VERSION.equals(rpcVersion))
-                            return false;
-                        final JSONObject result = json.getJSONObject("result");
-                        if (!result.has("credits")) // introduced in monero v0.15.0
-                            return false;
-                        final JSONObject header = result.getJSONObject("block_header");
-                        height = header.getLong("height");
-                        timestamp = header.getLong("timestamp");
-                        majorVersion = header.getInt("major_version");
-                        return true; // success
+        long triesLeft = 5;
+        while (triesLeft > 0) {
+            try {
+                long ta = System.nanoTime();
+
+                try (Response response = rpcServiceRequest(port).execute()) {
+                    Timber.d("%s: %s", response.code(), response.request().url());
+                    responseTime = (System.nanoTime() - ta) / 1000000.0;
+                    responseCode = response.code();
+                    if (response.isSuccessful()) {
+                        ResponseBody respBody = response.body(); // closed through Response object
+                        if ((respBody != null) && (respBody.contentLength() < 2000)) { // sanity check
+                            final JSONObject json = new JSONObject(respBody.string());
+                            String rpcVersion = json.getString("jsonrpc");
+                            if (!RPC_VERSION.equals(rpcVersion))
+                                return false;
+                            final JSONObject result = json.getJSONObject("result");
+                            if (!result.has("credits")) // introduced in monero v0.15.0
+                                return false;
+                            final JSONObject header = result.getJSONObject("block_header");
+                            height = header.getLong("height");
+                            timestamp = header.getLong("timestamp");
+                            majorVersion = header.getInt("major_version");
+                            return true; // success
+                        }
+                    } else {
+                        Timber.w("Trying RPC test again for %s", hostAddress.getHostAddress());
+                        triesLeft--;
                     }
                 }
+            } catch(IOException | JSONException ex){
+                Timber.d("EX: %s", ex.getMessage());
+                Timber.w("Trying RPC test again for %s", hostAddress.getHostAddress());
+                triesLeft--;
+            } finally{
+                tested = true;
             }
-        } catch (IOException | JSONException ex) {
-            Timber.d("EX: %s", ex.getMessage()); //TODO: do something here (show error?)
-        } finally {
-            tested = true;
         }
+
         return false;
     }
 
