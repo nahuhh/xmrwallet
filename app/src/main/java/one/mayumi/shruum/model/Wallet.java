@@ -380,6 +380,7 @@ public class Wallet {
 //virtual bool submitTransaction(const std::string &fileName) = 0;
 
     public native void disposeTransaction(PendingTransaction pendingTransaction);
+    public native boolean exportOutputs(String filename, boolean all);
 
 //virtual bool exportKeyImages(const std::string &filename) = 0;
 //virtual bool importKeyImages(const std::string &filename) = 0;

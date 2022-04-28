@@ -1021,7 +1021,15 @@ Java_one_mayumi_shruum_model_Wallet_disposeTransaction(JNIEnv *env, jobject inst
 
 //virtual bool exportKeyImages(const std::string &filename) = 0;
 //virtual bool importKeyImages(const std::string &filename) = 0;
-
+JNIEXPORT jboolean JNICALL
+Java_one_mayumi_shruum_model_Wallet_exportOutputs(JNIEnv *env, jobject instance,
+                                                        jstring filename, jboolean all) {
+    const char *_filename = env->GetStringUTFChars(filename, nullptr);
+    Bitmonero::Wallet *wallet = getHandle<Bitmonero::Wallet>(env, instance);
+    bool success = wallet->exportOutputs(_filename, all);
+    env->ReleaseStringUTFChars(filename, _filename);
+    return static_cast<jboolean>(success);
+}
 
 //virtual TransactionHistory * history() const = 0;
 JNIEXPORT jlong JNICALL
