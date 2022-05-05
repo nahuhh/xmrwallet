@@ -8,8 +8,8 @@ android {
         applicationId "one.mayumi.shruum"
         minSdkVersion 26
         targetSdkVersion 31
-        versionCode 1401
-        versionName "2.4.1 'Baldaŭ'"
+        versionCode 10000
+        versionName "1.0.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
