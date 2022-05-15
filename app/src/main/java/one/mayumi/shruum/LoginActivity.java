@@ -43,6 +43,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -335,7 +336,9 @@ public class LoginActivity extends BaseActivity
 
     @Override
     public boolean onWalletSelected(String walletName, boolean streetmode) {
-        if (node == null) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+        if (node == null && sharedPref.getString(getString(R.string.enable_rpc_check), "true").equals("true")) {
             Toast.makeText(this, getString(R.string.prompt_daemon_missing), Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -1184,8 +1187,16 @@ public class LoginActivity extends BaseActivity
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            Timber.d("checking %s", node.getAddress());
-            return node.testRpcService();
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+            String rpcCheck = sharedPref.getString(getString(R.string.enable_rpc_check), "true");
+
+            if(rpcCheck.equals("true")) {
+                Timber.d("checking %s", node.getAddress());
+                return node.testRpcService();
+            } else {
+                return true;
+            }
         }
 
         @Override

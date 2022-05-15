@@ -1,4 +1,8 @@
 <resources>
+    <string-array name="connectivity_check_values">
+        <item>true</item>
+        <item>false</item>
+    </string-array>
     <string-array name="daynight_values">
         <item>AUTO</item>
         <item>DAY</item>
