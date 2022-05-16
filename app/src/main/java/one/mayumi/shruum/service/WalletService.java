@@ -137,10 +137,13 @@ public class WalletService extends Service {
                     if (observer != null) {
                         observer.onRefreshed(wallet, fullRefresh);
 
-                        long currentTimestamp = System.currentTimeMillis() / 1000L;
-                        if(currentTimestamp >= timeoutTimestamp) {
-                            observer.onWalletClose();
-                            Timber.d("Closing wallet because of timeout.");
+                        if(wallet.isSynchronized()) {
+                            // only close when wallet is synchronized
+                            long currentTimestamp = System.currentTimeMillis() / 1000L;
+                            if (currentTimestamp >= timeoutTimestamp) {
+                                observer.onWalletClose();
+                                Timber.d("Closing wallet because of timeout.");
+                            }
                         }
                     }
                 }
