@@ -287,6 +287,11 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
         inflater.inflate(R.menu.list_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
         this.menu = menu;
+
+        final NetCipherHelper.Status status = NetCipherHelper.getStatus();
+        if(status == NetCipherHelper.Status.NOT_INSTALLED) {
+            changeTorIconColor(R.color.classic_negativeColor);
+        }
     }
 
     private boolean isFabOpen = false;
@@ -485,12 +490,13 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
     void showNetwork() {
         final NetCipherHelper.Status status = NetCipherHelper.getStatus();
         Timber.d("SHOW %s", status);
-        if (status == torStatus) return;
+        if (status == torStatus || status == NetCipherHelper.Status.NOT_INSTALLED) return;
         torStatus = status;
         activityCallback.runOnNetCipher(this::pingSelectedNode);
     }
 
     private void changeTorIconColor(int color) {
+        requireActivity();
         Activity activity = getActivity();
         if(activity != null && isAdded()) {
             activity.runOnUiThread(() -> {
