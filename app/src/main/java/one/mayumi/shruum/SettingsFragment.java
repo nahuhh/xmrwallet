@@ -98,7 +98,8 @@ public class SettingsFragment extends PreferenceFragmentCompat
     }
 
     public void populateLanguages() {
-        ListPreference language = findPreference(getString(R.string.preferred_locale));
+        // TODO uncomment later when we can add translations back
+        /*ListPreference language = findPreference(getString(R.string.preferred_locale));
         assert language != null;
 
         final ArrayList<Locale> availableLocales = LocaleHelper.getAvailableLocales(requireContext());
@@ -120,6 +121,6 @@ public class SettingsFragment extends PreferenceFragmentCompat
         for (int i = 1; i < languageTags.length; i++) {
             languageTags[i] = availableLocales.get(i - 1).toLanguageTag();
         }
-        language.setEntryValues(languageTags);
+        language.setEntryValues(languageTags);*/
     }
 }
