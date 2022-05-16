@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="one.mayumi.shruum">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -30,7 +29,7 @@
     </queries>
 
     <application
-        android:name="one.mayumi.shruum.XmrWalletApplication"
+        android:name=".XmrWalletApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -39,7 +38,7 @@
         android:theme="@style/MyMaterialThemeClassic"
         android:usesCleartextTraffic="true">
         <activity
-            android:name="one.mayumi.shruum.MainActivity"
+            android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|uiMode"
             android:exported="true"
             android:launchMode="singleTop"
@@ -51,13 +50,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="one.mayumi.shruum.WalletActivity"
+            android:name=".WalletActivity"
             android:configChanges="orientation|keyboardHidden|uiMode"
             android:label="@string/wallet_activity_name"
             android:launchMode="singleTask"
             android:screenOrientation="behind" />
         <activity
-            android:name="one.mayumi.shruum.LoginActivity"
+            android:name=".LoginActivity"
             android:configChanges="orientation|keyboardHidden"
             android:exported="true"
             android:label="@string/app_name"
@@ -88,13 +87,13 @@
                 android:resource="@xml/usb_device_filter" />
         </activity>
         <activity
-            android:name="one.mayumi.shruum.onboarding.OnBoardingActivity"
+            android:name=".onboarding.OnBoardingActivity"
             android:configChanges="orientation|keyboardHidden|uiMode"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 
         <service
-            android:name="one.mayumi.shruum.service.WalletService"
+            android:name=".service.WalletService"
             android:description="@string/service_description"
             android:exported="false"
             android:label="Monero Wallet Service" />
