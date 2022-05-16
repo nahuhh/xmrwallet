@@ -16,6 +16,7 @@
 
 package one.mayumi.shruum;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
@@ -490,13 +491,20 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
     }
 
     private void changeTorIconColor(int color) {
-        requireActivity().runOnUiThread(() -> {
-            Menu menu = this.menu;
-            try {
-                menu.findItem(R.id.action_network_settings).setIconTintList(ColorStateList.valueOf(getResources().getColor(color)));
-            } catch(NullPointerException npe) {
-                // ignore
-            }
-        });
+        Activity activity = getActivity();
+        if(activity != null && isAdded()) {
+            activity.runOnUiThread(() -> {
+                Menu menu = this.menu;
+                try {
+                    menu.findItem(R.id.action_network_settings).setIconTintList(ColorStateList.valueOf(getResources().getColor(color)));
+                } catch(NullPointerException npe) {
+                    Timber.d("changeTorIconColor: menu item was null.");
+                    // log but ignore
+                }
+            });
+        } else {
+            Timber.d("changeTorIconColor: activity is null.");
+            // log but ignore as it's not important
+        }
     }
 }
