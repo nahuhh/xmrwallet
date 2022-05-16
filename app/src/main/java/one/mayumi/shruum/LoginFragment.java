@@ -17,6 +17,11 @@
 package one.mayumi.shruum;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
+import android.graphics.PorterDuff;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -32,7 +37,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -66,6 +73,7 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
     private View tvGuntherSays;
 
     private Listener activityCallback;
+    private Menu menu;
 
     // Container Activity must implement this interface
     public interface Listener {
@@ -277,6 +285,7 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
     public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.list_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
+        this.menu = menu;
     }
 
     private boolean isFabOpen = false;
@@ -424,14 +433,26 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
                 if (selectedNode == null) { // autoselect
                     selectedNode = autoselect(favourites);
                 } else {
-                    selectedNode.testRpcService();
+                    boolean hasConnection = ((LoginActivity)requireActivity()).haveNetworkConnection();
+                    if(hasConnection) {
+                        boolean success = selectedNode.testRpcService();
+                        if(success) {
+                            changeTorIconColor(R.color.classic_positiveColor);
+                        } else {
+                            changeTorIconColor(R.color.classic_negativeColor);
+                        }
+                    } else {
+                        changeTorIconColor(R.color.classic_negativeColor);
+                    }
                 }
             } else throw new IllegalStateException();
             if ((selectedNode != null) && selectedNode.isValid() && selectedNode.isOnion()) {
                 activityCallback.setNode(selectedNode);
+                changeTorIconColor(R.color.classic_positiveColor);
                 return selectedNode;
             } else {
                 activityCallback.setNode(null);
+                changeTorIconColor(R.color.classic_negativeColor);
                 return null;
             }
         }
@@ -466,5 +487,11 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
         if (status == torStatus) return;
         torStatus = status;
         activityCallback.runOnNetCipher(this::pingSelectedNode);
+    }
+
+    private void changeTorIconColor(int color) {
+        requireActivity().runOnUiThread(() -> {
+            menu.findItem(R.id.action_network_settings).setIconTintList(ColorStateList.valueOf(getResources().getColor(color)));
+        });
     }
 }

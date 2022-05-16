@@ -134,6 +134,7 @@
     <string name="bad_wallet">Wallet does not exist!</string>
     <string name="prompt_daemon_missing">Node must be set!</string>
     <string name="prompt_wrong_net">Wallet does not match selected net</string><!--TODO deleteme-->
+    <string name="prompt_internet_missing">No internet connection!</string>
 
     <string name="label_watchonly">(Watch Only)</string>
 

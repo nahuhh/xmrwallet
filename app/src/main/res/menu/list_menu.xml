@@ -7,7 +7,6 @@
         android:icon="@drawable/ic_network_tor_on"
         android:orderInCategory="100"
         android:title="@string/menu_networking"
-        app:iconTint="?attr/colorControlNormal"
         android:iconTint="?attr/colorControlNormal"
         app:showAsAction="ifRoom" />
 

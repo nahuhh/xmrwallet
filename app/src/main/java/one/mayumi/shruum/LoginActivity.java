@@ -25,6 +25,8 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -337,6 +339,11 @@ public class LoginActivity extends BaseActivity
     @Override
     public boolean onWalletSelected(String walletName, boolean streetmode) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+        if(!haveNetworkConnection()) {
+            Toast.makeText(this, getString(R.string.prompt_internet_missing), Toast.LENGTH_SHORT).show();
+            return false;
+        }
 
         if (node == null && sharedPref.getString(getString(R.string.enable_rpc_check), "true").equals("true")) {
             Toast.makeText(this, getString(R.string.prompt_daemon_missing), Toast.LENGTH_SHORT).show();
@@ -1206,7 +1213,7 @@ public class LoginActivity extends BaseActivity
                 return;
             }
             if (result) {
-                Timber.d("selected wallet is .%s.", node.getName());
+                Timber.d("selected wallet is %s.", walletName);
                 // now it's getting real, onValidateFields if wallet exists
                 promptAndStart(walletName, streetmode);
             } else {
@@ -1477,5 +1484,22 @@ public class LoginActivity extends BaseActivity
         } else {
             waitingUiTask = uiTask;
         }
+    }
+
+    public boolean haveNetworkConnection() {
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
+
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
+        }
+        return haveConnectedWifi || haveConnectedMobile;
     }
 }
