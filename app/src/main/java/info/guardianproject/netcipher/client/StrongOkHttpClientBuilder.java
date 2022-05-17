@@ -21,6 +21,8 @@ package info.guardianproject.netcipher.client;
 import android.content.Context;
 import android.content.Intent;
 import javax.net.ssl.SSLSocketFactory;
+
+import info.guardianproject.netcipher.proxy.OrbotHelper;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
@@ -111,5 +113,16 @@ public class StrongOkHttpClientBuilder extends
     Request request=new Request.Builder().url(url).build();
 
     return(connection.newCall(request).execute().body().string());
+  }
+
+  @Override
+  public int getSocksPort(Intent status) {
+    if (status.getStringExtra(OrbotHelper.EXTRA_STATUS)
+            .equals(OrbotHelper.STATUS_ON)) {
+      return (status.getIntExtra(OrbotHelper.EXTRA_PROXY_PORT_SOCKS,
+              OrbotHelper.DEFAULT_PROXY_SOCKS_PORT));
+    }
+
+    return 9050;
   }
 }

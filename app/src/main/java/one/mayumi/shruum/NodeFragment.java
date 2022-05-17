@@ -215,10 +215,15 @@ public class NodeFragment extends Fragment
             activityCallback.setFavouriteNodes(nodeList);
         }
         AsyncTask.execute(() -> {
+
             activityCallback.setNode(nodeItem); // this marks it as selected & saves it as well
             nodeItem.setSelecting(false);
             try {
-                requireActivity().runOnUiThread(() -> nodesAdapter.allowClick(true));
+                requireActivity().runOnUiThread(() -> {
+                    Toast.makeText(requireContext(), R.string.toast_node_selected, Toast.LENGTH_SHORT).show();
+                    requireActivity().onBackPressed();
+                    nodesAdapter.allowClick(true);
+                });
             } catch (IllegalStateException ex) {
                 // it's ok
             }

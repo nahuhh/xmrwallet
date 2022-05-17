@@ -49,6 +49,8 @@ import androidx.preference.PreferenceManager;
 
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import info.guardianproject.netcipher.proxy.OrbotHelper;
 import one.mayumi.shruum.data.DefaultNodes;
 import one.mayumi.shruum.data.Node;
 import one.mayumi.shruum.data.NodeInfo;
@@ -339,13 +341,16 @@ public class LoginActivity extends BaseActivity
     @Override
     public boolean onWalletSelected(String walletName, boolean streetmode) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-
-        if(!haveNetworkConnection()) {
+        NetCipherHelper.Status status = NetCipherHelper.getStatus();
+        if(status == NetCipherHelper.Status.NOT_INSTALLED) {
+            Toast.makeText(this, getString(R.string.prompt_orbot_missing), Toast.LENGTH_SHORT).show();
+            return false;
+        } else if(!haveNetworkConnection()) {
             Toast.makeText(this, getString(R.string.prompt_internet_missing), Toast.LENGTH_SHORT).show();
             return false;
         }
 
-        if (node == null && sharedPref.getString(getString(R.string.enable_rpc_check), "true").equals("true")) {
+        if (node == null) {
             Toast.makeText(this, getString(R.string.prompt_daemon_missing), Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -1431,6 +1436,25 @@ public class LoginActivity extends BaseActivity
 
         if (fragment instanceof LoginFragment) {
             runOnUiThread(((LoginFragment) fragment)::showNetwork);
+
+            checkForOrbotStatusBug();
+        }
+    }
+
+    private int triesLeft = 2;
+    private void checkForOrbotStatusBug() {
+        NetCipherHelper.Status status = NetCipherHelper.getStatus();
+        boolean installed = OrbotHelper.isOrbotInstalled(getApplicationContext());
+        boolean running = NetCipherHelper.isTorRunning();
+        Timber.d("Orbot Status: %s", status);
+        if(installed && running && status != NetCipherHelper.Status.ENABLED && triesLeft > 0) {
+            Timber.d("Generating fake Orbot success message to bypass Orbot bug.");
+            // Orbot seems to be messing up and not giving the proper STATUS intent when it's already running, only when it's not (and is being started by us).
+            Intent statusIntent = new Intent(OrbotHelper.ACTION_STATUS);
+            statusIntent.putExtra(OrbotHelper.EXTRA_STATUS, OrbotHelper.STATUS_ON);
+            NetCipherHelper.getInstance().onEnabled(statusIntent);
+            triesLeft--;
+            Timber.d("Tries left: %d", triesLeft);
         }
     }
 
@@ -1478,7 +1502,10 @@ public class LoginActivity extends BaseActivity
 
     @Override
     public void runOnNetCipher(Runnable uiTask) {
-        if (waitingUiTask != null) throw new IllegalStateException("only one tor task at a time");
+        if (waitingUiTask != null) {
+            Timber.d("only one tor task at a time");
+            return;
+        }
         if (NetCipherHelper.hasClient()) {
             runOnUiThread(uiTask);
         } else {

@@ -146,7 +146,7 @@ public class NetCipherHelper implements StatusCallback {
         UNKNOWN;
     }
 
-    private Status status = Status.UNKNOWN;
+    private Status status = Status.DISABLED;
 
     @Override
     public void onStarting() {
@@ -236,14 +236,6 @@ public class NetCipherHelper implements StatusCallback {
             onDisabled();
         } else if (!orbotInit) {
             orbotInit = orbot.init();
-            boolean installed = OrbotHelper.isOrbotInstalled(context);
-            boolean running = isTorRunning();
-            if(installed && running) {
-                // Orbot seems to be messing up and not giving the proper STATUS intent when it's already running, only when it's not (and is being started by us).
-                Intent statusIntent = new Intent(OrbotHelper.ACTION_STATUS);
-                statusIntent.putExtra(OrbotHelper.EXTRA_STATUS, OrbotHelper.STATUS_ON);
-                onEnabled(statusIntent);
-            }
         } else {
             orbot.requestStart(context);
         }
@@ -381,7 +373,7 @@ public class NetCipherHelper implements StatusCallback {
         host.startActivity(OrbotHelper.getOrbotInstallIntent(context));
     }
 
-    public boolean isTorRunning() {
+    public static boolean isTorRunning() {
         try {
             new ServerSocket(9050).close();
             return false;

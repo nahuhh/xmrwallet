@@ -135,7 +135,9 @@
     <string name="prompt_daemon_missing">Node must be set!</string>
     <string name="prompt_wrong_net">Wallet does not match selected net</string><!--TODO deleteme-->
     <string name="prompt_internet_missing">No internet connection!</string>
-
+    <string name="prompt_orbot_missing">Orbot is not installed!</string>
+    <string name="prompt_orbot_offline">Orbot is not running!</string>
+    <string name="toast_node_selected">Node has been selected.</string>
     <string name="label_watchonly">(Watch Only)</string>
 
     <string name="label_wallet_receive">Receive</string>
