@@ -220,7 +220,7 @@ public class SendConfirmWizardFragment extends SendWizardFragment implements Sen
     public void preSend() {
         Helper.promptPassword(getContext(), getActivityCallback().getWalletName(), false, new Helper.PasswordAction() {
             @Override
-            public void act(String walletName, String password, boolean fingerprintUsed) {
+            public void act(String walletName, String password) {
                 send();
             }
 

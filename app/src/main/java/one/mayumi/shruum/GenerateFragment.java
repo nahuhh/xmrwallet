@@ -46,7 +46,6 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputLayout;
 import one.mayumi.shruum.model.Wallet;
 import one.mayumi.shruum.model.WalletManager;
-import one.mayumi.shruum.util.FingerprintHelper;
 import one.mayumi.shruum.util.Helper;
 import one.mayumi.shruum.util.KeyStoreHelper;
 import one.mayumi.shruum.util.RestoreHeight;
@@ -179,22 +178,6 @@ public class GenerateFragment extends Fragment {
             }
             return false;
         });
-
-        if (FingerprintHelper.isDeviceSupported(getContext())) {
-            llFingerprintAuth.setVisibility(View.VISIBLE);
-
-            final SwitchMaterial swFingerprintAllowed = (SwitchMaterial) llFingerprintAuth.getChildAt(0);
-            swFingerprintAllowed.setOnClickListener(view1 -> {
-                if (!swFingerprintAllowed.isChecked()) return;
-
-                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireActivity());
-                builder.setMessage(Html.fromHtml(getString(R.string.generate_fingerprint_warn)))
-                        .setCancelable(false)
-                        .setPositiveButton(getString(R.string.label_ok), null)
-                        .setNegativeButton(getString(R.string.label_cancel), (dialogInterface, i) -> swFingerprintAllowed.setChecked(false))
-                        .show();
-            });
-        }
 
         switch (type) {
             case TYPE_NEW:

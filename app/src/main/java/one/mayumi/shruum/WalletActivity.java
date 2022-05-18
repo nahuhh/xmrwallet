@@ -342,7 +342,7 @@ public class WalletActivity extends BaseActivity implements WalletFragment.Liste
     private void onDisableStreetMode() {
         Helper.promptPassword(WalletActivity.this, getWallet().getName(), false, new Helper.PasswordAction() {
             @Override
-            public void act(String walletName, String password, boolean fingerprintUsed) {
+            public void act(String walletName, String password) {
                 runOnUiThread(() -> {
                     enableStreetMode(false);
                     updateStreetMode();
@@ -855,7 +855,7 @@ public class WalletActivity extends BaseActivity implements WalletFragment.Liste
 
                         Helper.promptPassword(WalletActivity.this, getWallet().getName(), true, new Helper.PasswordAction() {
                             @Override
-                            public void act(String walletName, String password, boolean fingerprintUsed) {
+                            public void act(String walletName, String password) {
                                 replaceFragment(new GenerateReviewFragment(), null, extras);
                             }
 

@@ -21,7 +21,6 @@ import one.mayumi.shruum.R;
 enum OnBoardingScreen {
     WELCOME(R.string.onboarding_welcome_title, R.string.onboarding_welcome_information, R.drawable.ic_onboarding_welcome, false),
     SEED(R.string.onboarding_seed_title, R.string.onboarding_seed_information, R.drawable.ic_onboarding_seed, true),
-    FPSEND(R.string.onboarding_fpsend_title, R.string.onboarding_fpsend_information, R.drawable.ic_onboarding_fingerprint, false),
     NODES(R.string.onboarding_nodes_title, R.string.onboarding_nodes_information, R.drawable.ic_onboarding_nodes, false);
 
     private final int title;

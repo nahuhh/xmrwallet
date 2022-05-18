@@ -395,21 +395,15 @@ public class Helper {
         final Drawable icFingerprint = context.getDrawable(R.drawable.ic_fingerprint);
         final Drawable icError = context.getDrawable(R.drawable.ic_error_red_36dp);
         final Drawable icInfo = context.getDrawable(R.drawable.ic_info_white_24dp);
-
-        final boolean fingerprintAuthCheck = FingerprintHelper.isFingerPassValid(context, wallet);
-
-        final boolean fingerprintAuthAllowed = !fingerprintDisabled && fingerprintAuthCheck;
         final CancellationSignal cancelSignal = new CancellationSignal();
 
         final AtomicBoolean incorrectSavedPass = new AtomicBoolean(false);
 
         class PasswordTask extends AsyncTask<Void, Void, Boolean> {
             private String pass;
-            private boolean fingerprintUsed;
 
-            PasswordTask(String pass, boolean fingerprintUsed) {
+            PasswordTask(String pass) {
                 this.pass = pass;
-                this.fingerprintUsed = fingerprintUsed;
             }
 
             @Override
@@ -421,7 +415,7 @@ public class Helper {
 
             @Override
             protected Boolean doInBackground(Void... unused) {
-                return processPasswordEntry(context, wallet, pass, fingerprintUsed, action);
+                return processPasswordEntry(context, wallet, pass, action);
             }
 
             @Override
@@ -432,22 +426,8 @@ public class Helper {
                     openDialog.dismiss();
                     openDialog = null;
                 } else {
-                    if (fingerprintUsed) {
-                        incorrectSavedPass.set(true);
-                        tvOpenPrompt.setCompoundDrawablesRelativeWithIntrinsicBounds(icError, null, null, null);
-                        tvOpenPrompt.setText(context.getText(R.string.bad_saved_password));
-                    } else {
-                        if (!fingerprintAuthAllowed) {
-                            tvOpenPrompt.setVisibility(View.GONE);
-                        } else if (incorrectSavedPass.get()) {
-                            tvOpenPrompt.setCompoundDrawablesRelativeWithIntrinsicBounds(icError, null, null, null);
-                            tvOpenPrompt.setText(context.getText(R.string.bad_password));
-                        } else {
-                            tvOpenPrompt.setCompoundDrawablesRelativeWithIntrinsicBounds(icFingerprint, null, null, null);
-                            tvOpenPrompt.setText(context.getText(R.string.prompt_fingerprint_auth));
-                        }
-                        etPassword.setError(context.getString(R.string.bad_password));
-                    }
+                    tvOpenPrompt.setVisibility(View.GONE);
+                    etPassword.setError(context.getString(R.string.bad_password));
                 }
                 passwordTask = null;
             }
@@ -490,59 +470,13 @@ public class Helper {
                         });
         openDialog = alertDialogBuilder.create();
 
-        final FingerprintManager.AuthenticationCallback fingerprintAuthCallback;
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            fingerprintAuthCallback = null;
-        } else {
-            fingerprintAuthCallback = new FingerprintManager.AuthenticationCallback() {
-                @Override
-                public void onAuthenticationError(int errMsgId, CharSequence errString) {
-                    tvOpenPrompt.setCompoundDrawablesRelativeWithIntrinsicBounds(icError, null, null, null);
-                    tvOpenPrompt.setText(errString);
-                }
-
-                @Override
-                public void onAuthenticationHelp(int helpMsgId, CharSequence helpString) {
-                    tvOpenPrompt.setCompoundDrawablesRelativeWithIntrinsicBounds(icError, null, null, null);
-                    tvOpenPrompt.setText(helpString);
-                }
-
-                @Override
-                public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
-                    try {
-                        String userPass = KeyStoreHelper.loadWalletUserPass(context, wallet);
-                        if (passwordTask == null) {
-                            passwordTask = new PasswordTask(userPass, true);
-                            passwordTask.execute();
-                        }
-                    } catch (KeyStoreHelper.BrokenPasswordStoreException ex) {
-                        etPassword.setError(context.getString(R.string.bad_password));
-                        // TODO: better error message here - what would it be?
-                    }
-                }
-
-                @Override
-                public void onAuthenticationFailed() {
-                    tvOpenPrompt.setCompoundDrawablesRelativeWithIntrinsicBounds(icError, null, null, null);
-                    tvOpenPrompt.setText(context.getString(R.string.bad_fingerprint));
-                }
-            };
-        }
-
         openDialog.setOnShowListener(dialog -> {
-            if (fingerprintAuthAllowed && fingerprintAuthCallback != null) {
-                tvOpenPrompt.setCompoundDrawablesRelativeWithIntrinsicBounds(icFingerprint, null, null, null);
-                tvOpenPrompt.setText(context.getText(R.string.prompt_fingerprint_auth));
-                tvOpenPrompt.setVisibility(View.VISIBLE);
-                FingerprintHelper.authenticate(context, cancelSignal, fingerprintAuthCallback);
-            } else {
-                etPassword.requestFocus();
-            }
+            etPassword.requestFocus();
             Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
             button.setOnClickListener(view -> {
                 String pass = etPassword.getEditText().getText().toString();
                 if (passwordTask == null) {
-                    passwordTask = new PasswordTask(pass, false);
+                    passwordTask = new PasswordTask(pass);
                     passwordTask.execute();
                 }
             });
@@ -554,7 +488,7 @@ public class Helper {
                     || (actionId == EditorInfo.IME_ACTION_DONE)) {
                 String pass = etPassword.getEditText().getText().toString();
                 if (passwordTask == null) {
-                    passwordTask = new PasswordTask(pass, false);
+                    passwordTask = new PasswordTask(pass);
                     passwordTask.execute();
                 }
                 return true;
@@ -571,15 +505,15 @@ public class Helper {
     }
 
     public interface PasswordAction {
-        void act(String walletName, String password, boolean fingerprintUsed);
+        void act(String walletName, String password);
 
         void fail(String walletName);
     }
 
-    static private boolean processPasswordEntry(Context context, String walletName, String pass, boolean fingerprintUsed, PasswordAction action) {
+    static private boolean processPasswordEntry(Context context, String walletName, String pass, PasswordAction action) {
         String walletPassword = Helper.getWalletPassword(context, walletName, pass);
         if (walletPassword != null) {
-            action.act(walletName, walletPassword, fingerprintUsed);
+            action.act(walletName, walletPassword);
             return true;
         } else {
             action.fail(walletName);
