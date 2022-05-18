@@ -422,7 +422,17 @@ public class Wallet {
 
     public native String getTxKey(String txid);
 
-//virtual std::string signMessage(const std::string &message) = 0;
+    public String sign(String message) {
+        return this.signMessage(message);
+    }
+
+    private native String signMessage(String message);
+
+    public boolean verify(String message, String address, String signature) {
+        return this.verifySignedMessage(message, address, signature);
+    }
+
+    private native boolean verifySignedMessage(String message, String address, String signature);
 //virtual bool verifySignedMessage(const std::string &message, const std::string &addres, const std::string &signature) const = 0;
 
 //virtual bool parse_uri(const std::string &uri, std::string &address, std::string &payment_id, uint64_t &tvAmount, std::string &tx_description, std::string &recipient_name, std::vector<std::string> &unknown_parameters, std::string &error) = 0;
