@@ -538,5 +538,7 @@
 
     <string name="fab_receive">Receive</string>
     <string name="fab_send">Send</string>
+    <string name="fab_verify">Verify</string>
+    <string name="fab_sign">Sign</string>
 
 </resources>

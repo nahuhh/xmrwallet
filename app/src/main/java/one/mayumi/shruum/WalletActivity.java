@@ -982,6 +982,22 @@ public class WalletActivity extends BaseActivity implements WalletFragment.Liste
     }
 
     @Override
+    public void toSign(View view) {
+        Timber.d("startSign()");
+        Bundle b = new Bundle();
+        replaceFragment(new ReceiveFragment(), null, b);
+        Timber.d("ReceiveFragment placed");
+    }
+
+    @Override
+    public void toVerify(View view) {
+        Timber.d("startVerify()");
+        Bundle b = new Bundle();
+        replaceFragment(new ReceiveFragment(), null, b);
+        Timber.d("ReceiveFragment placed");
+    }
+
+    @Override
     public long getTotalFunds() {
         return getWallet().getUnlockedBalance();
     }
