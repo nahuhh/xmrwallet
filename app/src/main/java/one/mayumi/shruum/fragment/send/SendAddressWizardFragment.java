@@ -17,7 +17,6 @@
 package one.mayumi.shruum.fragment.send;
 
 import android.content.Context;
-import android.nfc.NfcManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputType;
@@ -181,11 +180,6 @@ public class SendAddressWizardFragment extends SendWizardFragment {
         etDummy = view.findViewById(R.id.etDummy);
         etDummy.setRawInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         etDummy.requestFocus();
-
-        View tvNfc = view.findViewById(R.id.tvNfc);
-        NfcManager manager = (NfcManager) getContext().getSystemService(Context.NFC_SERVICE);
-        if ((manager != null) && (manager.getDefaultAdapter() != null))
-            tvNfc.setVisibility(View.VISIBLE);
 
         return view;
     }
