@@ -3,7 +3,7 @@
     <!-- CLASSIC -->
     <color name="classic_textColorPrimary">#ffffff</color>
     <color name="classic_textColorSecondary">#FFF6EF</color>
-    <color name="classic_statusBarColor">#292929</color>
+    <color name="classic_statusBarColor">#141414</color>
     <color name="classic_gradientTopColor">@color/classic_statusBarColor</color>
     <color name="classic_gradientBottomColor">@color/classic_statusBarColor</color>
     <color name="classic_streetColorA">#4E018A</color>
@@ -16,7 +16,7 @@
     <color name="classic_neutralColor">#ffffff</color>
     <color name="classic_noticeColor">#FFAB1A</color>
     <color name="classic_navigationBarColor">@color/classic_colorBackground</color>
-    <color name="classic_colorBackground">#1C1C1C</color>
+    <color name="classic_colorBackground">#000000</color>
     <color name="classic_colorOnBackground">#ffffff</color>
     <color name="classic_colorSurface">@color/classic_colorBackground</color>
     <color name="classic_colorOnSurface">@color/classic_textColorPrimary</color>
