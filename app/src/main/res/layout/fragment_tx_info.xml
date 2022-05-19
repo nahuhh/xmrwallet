@@ -59,123 +59,6 @@
                 tools:text="2017-10-09 12:44:13 +0200" />
         </LinearLayout>
 
-        <com.google.android.material.card.MaterialCardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/cvXmrTo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:foreground="?android:attr/selectableItemBackground"
-            card_view:contentPadding="8dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:id="@+id/tvXmrToLogo"
-                    android:layout_width="match_parent"
-                    android:layout_height="32dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:src="@drawable/ic_sideshift_white" />
-
-                <TableLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:shrinkColumns="1">
-
-                    <TableRow>
-
-                        <TextView
-                            style="@style/MoneroLabel.Small"
-                            android:layout_gravity="center_vertical"
-                            android:gravity="end"
-                            android:padding="8dp"
-                            android:text="@string/tx_amount" />
-
-                        <TextView
-                            android:id="@+id/tvTxAmountBtc"
-                            style="@style/MoneroText"
-                            android:gravity="start"
-                            android:padding="8dp"
-                            android:selectAllOnFocus="true"
-                            android:textIsSelectable="true"
-                            tools:text="1.008 BTC" />
-                    </TableRow>
-
-                    <TableRow>
-
-                        <TextView
-                            style="@style/MoneroLabel.Small"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="top"
-                            android:gravity="end"
-                            android:padding="8dp"
-                            android:text="@string/tx_destination" />
-
-                        <TextView
-                            android:id="@+id/tvDestinationBtc"
-                            style="@style/MoneroText"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="start"
-                            android:padding="8dp"
-                            android:selectAllOnFocus="true"
-                            android:textIsSelectable="true"
-                            tools:text="mjn127C5wRQCULksMYMFHLp9UTdQuCfbZ9" />
-                    </TableRow>
-
-                    <TableRow>
-
-                        <TextView
-                            android:id="@+id/tvXmrToKeyLabel"
-                            style="@style/MoneroLabel.Small"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:gravity="end"
-                            android:padding="8dp"
-                            android:text="@string/label_send_btc_xmrto_key_lb" />
-
-                        <LinearLayout>
-
-                            <TextView
-                                android:id="@+id/tvTxXmrToKey"
-                                style="@style/MoneroText"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:background="?android:attr/colorBackground"
-                                android:drawablePadding="16dp"
-                                android:paddingStart="8dp"
-                                android:paddingTop="8dp"
-                                android:paddingEnd="8dp"
-                                android:paddingBottom="8dp"
-                                android:textColor="?attr/colorPrimary"
-                                card_view:drawableEndCompat="@drawable/ic_content_copy_24dp"
-                                tools:text="f173118220f1461841da" />
-                        </LinearLayout>
-                    </TableRow>
-                </TableLayout>
-
-                <TextView
-                    android:id="@+id/tvXmrToSupport"
-                    style="@style/MoneroText.Medium"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:drawablePadding="8dp"
-                    android:gravity="center"
-                    android:text="@string/label_send_btc_xmrto_info"
-                    card_view:drawableEndCompat="@drawable/ic_launch_external" />
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
         <TableLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -331,6 +214,24 @@
 
                 <TextView
                     android:id="@+id/tvTxBlockheight"
+                    style="@style/MoneroText"
+                    android:gravity="start"
+                    android:padding="8dp"
+                    android:selectAllOnFocus="true"
+                    android:textIsSelectable="true" />
+            </TableRow>
+
+            <TableRow>
+
+                <TextView
+                    style="@style/MoneroLabel.Small"
+                    android:layout_gravity="top"
+                    android:gravity="end"
+                    android:padding="8dp"
+                    android:text="@string/tx_confirmation" />
+
+                <TextView
+                    android:id="@+id/textview_tx_confirmations"
                     style="@style/MoneroText"
                     android:gravity="start"
                     android:padding="8dp"

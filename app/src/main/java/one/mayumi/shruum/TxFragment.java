@@ -44,6 +44,7 @@ import one.mayumi.shruum.data.UserNotes;
 import one.mayumi.shruum.model.TransactionInfo;
 import one.mayumi.shruum.model.Transfer;
 import one.mayumi.shruum.model.Wallet;
+import one.mayumi.shruum.model.WalletManager;
 import one.mayumi.shruum.util.Helper;
 import one.mayumi.shruum.util.ThemeHelper;
 import one.mayumi.shruum.widget.Toolbar;
@@ -78,31 +79,15 @@ public class TxFragment extends Fragment {
     private TextView tvDestination;
     private TextView tvTxPaymentId;
     private TextView tvTxBlockheight;
+    private TextView tvTxConfirmations;
     private TextView tvTxAmount;
     private TextView tvTxFee;
     private TextView tvTxTransfers;
     private TextView etTxNotes;
 
-    // XMRTO stuff
-    private View cvXmrTo;
-    private TextView tvTxXmrToKey;
-    private TextView tvDestinationBtc;
-    private TextView tvTxAmountBtc;
-    private TextView tvXmrToSupport;
-    private TextView tvXmrToKeyLabel;
-    private ImageView tvXmrToLogo;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tx_info, container, false);
-
-        cvXmrTo = view.findViewById(R.id.cvXmrTo);
-        tvTxXmrToKey = view.findViewById(R.id.tvTxXmrToKey);
-        tvDestinationBtc = view.findViewById(R.id.tvDestinationBtc);
-        tvTxAmountBtc = view.findViewById(R.id.tvTxAmountBtc);
-        tvXmrToSupport = view.findViewById(R.id.tvXmrToSupport);
-        tvXmrToKeyLabel = view.findViewById(R.id.tvXmrToKeyLabel);
-        tvXmrToLogo = view.findViewById(R.id.tvXmrToLogo);
 
         tvAccount = view.findViewById(R.id.tvAccount);
         tvAddress = view.findViewById(R.id.tvAddress);
@@ -112,17 +97,13 @@ public class TxFragment extends Fragment {
         tvDestination = view.findViewById(R.id.tvDestination);
         tvTxPaymentId = view.findViewById(R.id.tvTxPaymentId);
         tvTxBlockheight = view.findViewById(R.id.tvTxBlockheight);
+        tvTxConfirmations = view.findViewById(R.id.textview_tx_confirmations);
         tvTxAmount = view.findViewById(R.id.tvTxAmount);
         tvTxFee = view.findViewById(R.id.tvTxFee);
         tvTxTransfers = view.findViewById(R.id.tvTxTransfers);
         etTxNotes = view.findViewById(R.id.etTxNotes);
 
         etTxNotes.setRawInputType(InputType.TYPE_CLASS_TEXT);
-
-        tvTxXmrToKey.setOnClickListener(v -> {
-            Helper.clipBoardCopy(getActivity(), getString(R.string.label_copy_xmrtokey), tvTxXmrToKey.getText().toString());
-            Toast.makeText(getActivity(), getString(R.string.message_copy_xmrtokey), Toast.LENGTH_SHORT).show();
-        });
 
         info = getArguments().getParcelable(ARG_INFO);
         show();
@@ -236,11 +217,16 @@ public class TxFragment extends Fragment {
         tvTxKey.setText(info.txKey.isEmpty() ? "-" : info.txKey);
         tvTxPaymentId.setText(info.paymentId);
         if (info.isFailed) {
+            tvTxConfirmations.setText("0");
             tvTxBlockheight.setText(getString(R.string.tx_failed));
         } else if (info.isPending) {
+            tvTxConfirmations.setText("0");
             tvTxBlockheight.setText(getString(R.string.tx_pending));
         } else {
+            long blockchainHeight = WalletManager.getInstance().getWallet().getBlockChainHeight();
+            long confirmations = (blockchainHeight - info.blockheight) + 1;
             tvTxBlockheight.setText("" + info.blockheight);
+            tvTxConfirmations.setText("" + confirmations);
         }
         String sign = (info.direction == TransactionInfo.Direction.Direction_In ? "+" : "-");
 
@@ -298,42 +284,6 @@ public class TxFragment extends Fragment {
         }
         tvTxTransfers.setText(sb.toString());
         tvDestination.setText(dstSb.toString());
-        showBtcInfo();
-    }
-
-    @SuppressLint("SetTextI18n")
-    void showBtcInfo() {
-        if (userNotes.xmrtoKey != null) {
-            cvXmrTo.setVisibility(View.VISIBLE);
-            String key = userNotes.xmrtoKey;
-            if ("xmrto".equals(userNotes.xmrtoTag)) { // legacy xmr.to service :(
-                key = "xmrto-" + key;
-            }
-            tvTxXmrToKey.setText(key);
-            tvDestinationBtc.setText(userNotes.xmrtoDestination);
-            tvTxAmountBtc.setText(userNotes.xmrtoAmount + " " + userNotes.xmrtoCurrency);
-            switch (userNotes.xmrtoTag) {
-                case "xmrto":
-                    tvXmrToSupport.setVisibility(View.GONE);
-                    tvXmrToKeyLabel.setVisibility(View.INVISIBLE);
-                    tvXmrToLogo.setImageResource(R.drawable.ic_xmrto_logo);
-                    break;
-                case "side": // defaults in layout - just add underline
-                    tvXmrToSupport.setPaintFlags(tvXmrToSupport.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-                    tvXmrToSupport.setOnClickListener(v -> {
-                        Uri uri = Uri.parse("https://sideshift.ai/orders/" + userNotes.xmrtoKey);
-                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                        startActivity(intent);
-                    });
-                    break;
-                default:
-                    tvXmrToSupport.setVisibility(View.GONE);
-                    tvXmrToKeyLabel.setVisibility(View.INVISIBLE);
-                    tvXmrToLogo.setVisibility(View.GONE);
-            }
-        } else {
-            cvXmrTo.setVisibility(View.GONE);
-        }
     }
 
     @Override
