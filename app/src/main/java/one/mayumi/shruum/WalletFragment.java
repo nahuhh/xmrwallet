@@ -27,7 +27,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -38,11 +37,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.brnunes.swipeablerecyclerview.SwipeableRecyclerViewTouchListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
+
 import one.mayumi.shruum.layout.TransactionInfoAdapter;
 import one.mayumi.shruum.model.TransactionInfo;
 import one.mayumi.shruum.model.Wallet;
 import one.mayumi.shruum.util.Helper;
-import one.mayumi.shruum.util.ThemeHelper;
 import one.mayumi.shruum.widget.Toolbar;
 
 import java.text.NumberFormat;
@@ -56,13 +56,10 @@ public class WalletFragment extends Fragment
     private TransactionInfoAdapter adapter;
     private final NumberFormat formatter = NumberFormat.getInstance();
 
-    private TextView tvStreetView;
-    private LinearLayout llBalance;
     private TextView tvBalance;
     private TextView tvUnconfirmedAmount;
     private TextView tvProgress;
-    private ImageView ivSynced;
-    private ProgressBar pbProgress;
+    private CircularProgressIndicator pbProgress;
     RecyclerView txlist;
 
     private boolean isFabOpen = false;
@@ -95,15 +92,12 @@ public class WalletFragment extends Fragment
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_wallet, container, false);
 
-        tvStreetView = view.findViewById(R.id.tvStreetView);
-        llBalance = view.findViewById(R.id.llBalance);
         tvProgress = view.findViewById(R.id.tvProgress);
         pbProgress = view.findViewById(R.id.pbProgress);
-        tvBalance = view.findViewById(R.id.tvBalance);
+        tvBalance = view.findViewById(R.id.balance_textview);
         showBalance(Helper.getDisplayAmount(0));
         tvUnconfirmedAmount = view.findViewById(R.id.tvUnconfirmedAmount);
         showUnconfirmed(0);
-        ivSynced = view.findViewById(R.id.ivSynced);
 
         txlist = view.findViewById(R.id.list);
         adapter = new TransactionInfoAdapter(getActivity(), this);
@@ -229,14 +223,11 @@ public class WalletFragment extends Fragment
     }
 
     void showBalance(String balance) {
-        tvBalance.setText(getResources().getString(R.string.xmr_confirmed_amount, balance));
         final boolean streetMode = activityCallback.isStreetMode();
         if (!streetMode) {
-            llBalance.setVisibility(View.VISIBLE);
-            tvStreetView.setVisibility(View.INVISIBLE);
+            tvBalance.setText(getResources().getString(R.string.xmr_confirmed_amount, balance));
         } else {
-            llBalance.setVisibility(View.INVISIBLE);
-            tvStreetView.setVisibility(View.VISIBLE);
+            tvBalance.setText(getResources().getString(R.string.menu_streetmode));
         }
     }
 
@@ -336,12 +327,7 @@ public class WalletFragment extends Fragment
 
     public void setProgress(final int n) {
         syncProgress = n;
-        if (n > 100) {
-            pbProgress.setIndeterminate(true);
-            pbProgress.setVisibility(View.VISIBLE);
-        } else if (n >= 0) {
-            pbProgress.setIndeterminate(false);
-            pbProgress.setProgress(n);
+        if (n >= 0) {
             pbProgress.setVisibility(View.VISIBLE);
         } else { // <0
             pbProgress.setVisibility(View.INVISIBLE);
@@ -383,17 +369,15 @@ public class WalletFragment extends Fragment
                 long daemonHeight = activityCallback.getDaemonHeight();
                 long walletHeight = wallet.getBlockChainHeight();
                 long n = daemonHeight - walletHeight;
-                sync = getString(R.string.status_syncing) + " " + formatter.format(n) + " " + getString(R.string.status_remaining);
+                sync = formatter.format(n) + " " + getString(R.string.status_remaining);
                 if (firstBlock == 0) {
                     firstBlock = walletHeight;
                 }
                 int x = 100 - Math.round(100f * n / (1f * daemonHeight - firstBlock));
                 if (x == 0) x = 101; // indeterminate
                 setProgress(x);
-                ivSynced.setVisibility(View.GONE);
             } else {
-                sync = getString(R.string.status_synced) + " " + formatter.format(wallet.getBlockChainHeight());
-                ivSynced.setVisibility(View.VISIBLE);
+                sync = "";
             }
         } else {
             sync = getString(R.string.status_wallet_connecting);
