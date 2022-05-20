@@ -985,7 +985,7 @@ public class WalletActivity extends BaseActivity implements WalletFragment.Liste
     public void toSign(View view) {
         Timber.d("startSign()");
         Bundle b = new Bundle();
-        replaceFragment(new ReceiveFragment(), null, b);
+        replaceFragment(new SignMessageFragment(), null, b);
         Timber.d("ReceiveFragment placed");
     }
 

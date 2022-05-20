@@ -158,10 +158,12 @@
 
     <string name="label_copy_viewkey">View Key</string>
     <string name="label_copy_address">Public Address</string>
+    <string name="label_copy_signature">Signature</string>
     <string name="label_copy_xmrtokey">Key</string>
     <string name="message_copy_viewkey">View Key copied to clipboard!</string>
     <string name="message_copy_xmrtokey">Key copied to clipboard!</string>
     <string name="message_copy_address">Wallet Address copied to clipboard!</string>
+    <string name="message_copy_signature">Signature copied to clipboard.</string>
     <string name="message_copy_txid">Transaction ID copied to clipboard!</string>
     <string name="message_nocopy">Copy disabled for security reasons!</string>
 
@@ -539,5 +541,6 @@
     <string name="tx_confirmation">Confirmations</string>
     <string name="fab_verify">Verify</string>
     <string name="fab_sign">Sign</string>
+    <string name="sign_message_hint">Message</string>
 
 </resources>
