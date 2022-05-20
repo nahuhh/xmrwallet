@@ -542,5 +542,8 @@
     <string name="fab_verify">Verify</string>
     <string name="fab_sign">Sign</string>
     <string name="sign_message_hint">Message</string>
-
+    <string name="sign_address_hint">Address</string>
+    <string name="sign_signature_hint">Signature</string>
+    <string name="invalid_signature">Signature is NOT valid.</string>
+    <string name="valid_signature">Signature is valid.</string>
 </resources>

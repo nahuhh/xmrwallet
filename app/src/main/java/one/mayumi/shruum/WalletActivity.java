@@ -993,7 +993,7 @@ public class WalletActivity extends BaseActivity implements WalletFragment.Liste
     public void toVerify(View view) {
         Timber.d("startVerify()");
         Bundle b = new Bundle();
-        replaceFragment(new ReceiveFragment(), null, b);
+        replaceFragment(new VerifySignatureFragment(), null, b);
         Timber.d("ReceiveFragment placed");
     }
 

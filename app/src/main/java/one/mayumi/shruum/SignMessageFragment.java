@@ -16,39 +16,20 @@
 
 package one.mayumi.shruum;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.InputType;
-import android.text.TextWatcher;
-import android.util.Patterns;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.textfield.TextInputLayout;
 
-import one.mayumi.shruum.data.BarcodeData;
-import one.mayumi.shruum.data.Crypto;
-import one.mayumi.shruum.data.TxData;
-import one.mayumi.shruum.data.UserNotes;
-import one.mayumi.shruum.model.PendingTransaction;
 import one.mayumi.shruum.model.Wallet;
 import one.mayumi.shruum.model.WalletManager;
 import one.mayumi.shruum.util.Helper;
-import one.mayumi.shruum.util.OpenAliasHelper;
-import one.mayumi.shruum.util.ServiceHelper;
-
-import java.util.Map;
 
 import timber.log.Timber;
 
