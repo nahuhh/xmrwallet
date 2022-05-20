@@ -63,9 +63,9 @@ public class WalletFragment extends Fragment
     RecyclerView txlist;
 
     private boolean isFabOpen = false;
-    private FloatingActionButton fab, fabNew, fabImport;
+    private FloatingActionButton fab, fabReceive, fabSend, fabSign, fabVerify;
     private RelativeLayout fabScreen, fabBackground;
-    private RelativeLayout fabNewL, fabImportL;
+    private RelativeLayout fabReceiveLayout, fabSendLayout, fabSignLayout, fabVerifyLayout;
     private Animation fab_open, fab_close, rotate_forward, rotate_backward, fab_open_screen, fab_close_screen;
 
     private final List<String> dismissedTransactions = new ArrayList<>();
@@ -143,11 +143,15 @@ public class WalletFragment extends Fragment
         fabScreen = view.findViewById(R.id.fabScreen);
         fabBackground = view.findViewById(R.id.fabBackground);
         fab = view.findViewById(R.id.fab);
-        fabNew = view.findViewById(R.id.fabNew);
-        fabImport = view.findViewById(R.id.fabImport);
+        fabReceive = view.findViewById(R.id.fab_receive);
+        fabSend = view.findViewById(R.id.fab_send);
+        fabSign = view.findViewById(R.id.fab_sign);
+        fabVerify = view.findViewById(R.id.fab_verify);
 
-        fabNewL = view.findViewById(R.id.fabNewL);
-        fabImportL = view.findViewById(R.id.fabImportL);
+        fabReceiveLayout = view.findViewById(R.id.fab_receive_layout);
+        fabSendLayout = view.findViewById(R.id.fab_send_layout);
+        fabSignLayout = view.findViewById(R.id.fab_sign_layout);
+        fabVerifyLayout = view.findViewById(R.id.fab_verify_layout);
 
         fab_open_screen = AnimationUtils.loadAnimation(getContext(), R.anim.fab_open_screen);
         fab_close_screen = AnimationUtils.loadAnimation(getContext(), R.anim.fab_close_screen);
@@ -156,8 +160,10 @@ public class WalletFragment extends Fragment
         rotate_forward = AnimationUtils.loadAnimation(getContext(), R.anim.rotate_forward);
         rotate_backward = AnimationUtils.loadAnimation(getContext(), R.anim.rotate_backward);
         fab.setOnClickListener(this);
-        fabNew.setOnClickListener(this);
-        fabImport.setOnClickListener(this);
+        fabReceive.setOnClickListener(this);
+        fabSend.setOnClickListener(this);
+        fabSign.setOnClickListener(this);
+        fabVerify.setOnClickListener(this);
         fabScreen.setOnClickListener(this);
         fabBackground.setOnClickListener(this);
 
@@ -176,14 +182,18 @@ public class WalletFragment extends Fragment
         Timber.d("onClick %d/%d", id, R.id.fabLedger);
         if (id == R.id.fab) {
             animateFAB();
-        } else if (id == R.id.fabNew) {
-            fabScreen.setVisibility(View.INVISIBLE);
-            fabBackground.setVisibility(View.INVISIBLE);
+        } else if (id == R.id.fab_receive) {
+            animateFAB();
             activityCallback.onWalletReceive(v);
-            isFabOpen = false;
-        } else if (id == R.id.fabImport) {
+        } else if (id == R.id.fab_send) {
             animateFAB();
             activityCallback.onSendRequest(v);
+        }  else if (id == R.id.fab_sign) {
+            animateFAB();
+            activityCallback.toSign(v);
+        }  else if (id == R.id.fab_verify) {
+            animateFAB();
+            activityCallback.toVerify(v);
         }  else if (id == R.id.fabScreen || id == R.id.fabBackground) {
             animateFAB();
         }
@@ -200,10 +210,14 @@ public class WalletFragment extends Fragment
             fabBackground.setClickable(false);
             fabBackground.startAnimation(fab_close_screen);
             fab.startAnimation(rotate_backward);
-            fabNewL.startAnimation(fab_close);
-            fabNew.setClickable(false);
-            fabImportL.startAnimation(fab_close);
-            fabImport.setClickable(false);
+            fabReceiveLayout.startAnimation(fab_close);
+            fabReceive.setClickable(false);
+            fabSendLayout.startAnimation(fab_close);
+            fabSend.setClickable(false);
+            fabSignLayout.startAnimation(fab_close);
+            fabSign.setClickable(false);
+            fabVerifyLayout.startAnimation(fab_close);
+            fabVerify.setClickable(false);
             isFabOpen = false;
         } else { // open the fab
             fabScreen.setClickable(true);
@@ -211,13 +225,19 @@ public class WalletFragment extends Fragment
             fabBackground.setClickable(true);
             fabBackground.startAnimation(fab_open_screen);
             fab.startAnimation(rotate_forward);
-            fabNewL.setVisibility(View.VISIBLE);
-            fabImportL.setVisibility(View.VISIBLE);
+            fabReceiveLayout.setVisibility(View.VISIBLE);
+            fabSendLayout.setVisibility(View.VISIBLE);
+            fabSignLayout.setVisibility(View.VISIBLE);
+            fabVerifyLayout.setVisibility(View.VISIBLE);
 
-            fabNewL.startAnimation(fab_open);
-            fabNew.setClickable(true);
-            fabImportL.startAnimation(fab_open);
-            fabImport.setClickable(true);
+            fabReceiveLayout.startAnimation(fab_open);
+            fabReceive.setClickable(true);
+            fabSendLayout.startAnimation(fab_open);
+            fabSend.setClickable(true);
+            fabSignLayout.startAnimation(fab_open);
+            fabSign.setClickable(true);
+            fabVerifyLayout.startAnimation(fab_open);
+            fabVerify.setClickable(true);
             isFabOpen = true;
         }
     }
@@ -287,16 +307,16 @@ public class WalletFragment extends Fragment
 
     public void onSynced() {
         if (!activityCallback.isWatchOnly()) {
-            fabImport.setVisibility(View.VISIBLE);
-            fabImport.setEnabled(true);
+            fabSend.setVisibility(View.VISIBLE);
+            fabSend.setEnabled(true);
         }
         if (isVisible()) enableAccountsList(true); //otherwise it is enabled in onResume()
     }
 
     public void unsync() {
         if (!activityCallback.isWatchOnly()) {
-            fabImport.setVisibility(View.INVISIBLE);
-            fabImport.setEnabled(false);
+            fabSend.setVisibility(View.INVISIBLE);
+            fabSend.setEnabled(false);
         }
         if (isVisible()) enableAccountsList(false); //otherwise it is enabled in onResume()
         firstBlock = 0;
@@ -311,8 +331,12 @@ public class WalletFragment extends Fragment
 
     private void showReceive() {
         if (walletLoaded) {
-            fabNew.setVisibility(View.VISIBLE);
-            fabNew.setEnabled(true);
+            fabReceive.setVisibility(View.VISIBLE);
+            fabReceive.setEnabled(true);
+            fabSign.setVisibility(View.VISIBLE);
+            fabSign.setEnabled(true);
+            fabVerify.setVisibility(View.VISIBLE);
+            fabVerify.setEnabled(true);
         }
     }
 
@@ -414,6 +438,10 @@ public class WalletFragment extends Fragment
         String getTxKey(String txId);
 
         void onWalletReceive(View view);
+
+        void toSign(View view);
+
+        void toVerify(View view);
 
         boolean hasWallet();
 

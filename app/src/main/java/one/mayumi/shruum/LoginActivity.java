@@ -376,7 +376,7 @@ public class LoginActivity extends BaseActivity
                     if (WalletManager.getInstance().walletExists(walletFile)) {
                         Helper.promptPassword(LoginActivity.this, walletName, true, new Helper.PasswordAction() {
                             @Override
-                            public void act(String walletName1, String password, boolean fingerprintUsed) {
+                            public void act(String walletName1, String password) {
                                 if (checkDevice(walletName1, password))
                                     startDetails(walletFile, password, GenerateReviewFragment.VIEW_TYPE_DETAILS);
                             }
@@ -743,13 +743,12 @@ public class LoginActivity extends BaseActivity
         }
     }
 
-    void startWallet(String walletName, String walletPassword,
-                     boolean fingerprintUsed, boolean streetmode) {
+    void startWallet(String walletName, String walletPassword, boolean streetmode) {
         Timber.d("startWallet()");
         Intent intent = new Intent(getApplicationContext(), WalletActivity.class);
         intent.putExtra(WalletActivity.REQUEST_ID, walletName);
         intent.putExtra(WalletActivity.REQUEST_PW, walletPassword);
-        intent.putExtra(WalletActivity.REQUEST_FINGERPRINT_USED, fingerprintUsed);
+        intent.putExtra(WalletActivity.REQUEST_FINGERPRINT_USED, false);
         intent.putExtra(WalletActivity.REQUEST_STREETMODE, streetmode);
         if (uri != null) {
             intent.putExtra(WalletActivity.REQUEST_URI, uri);
@@ -1256,9 +1255,9 @@ public class LoginActivity extends BaseActivity
             Helper.promptPassword(LoginActivity.this, walletName, false,
                     new Helper.PasswordAction() {
                         @Override
-                        public void act(String walletName, String password, boolean fingerprintUsed) {
+                        public void act(String walletName, String password) {
                             if (checkDevice(walletName, password))
-                                startWallet(walletName, password, fingerprintUsed, streetmode);
+                                startWallet(walletName, password, streetmode);
                         }
 
                         @Override

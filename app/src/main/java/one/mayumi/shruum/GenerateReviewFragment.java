@@ -53,7 +53,6 @@ import one.mayumi.shruum.ledger.LedgerProgressDialog;
 import one.mayumi.shruum.model.NetworkType;
 import one.mayumi.shruum.model.Wallet;
 import one.mayumi.shruum.model.WalletManager;
-import one.mayumi.shruum.util.FingerprintHelper;
 import one.mayumi.shruum.util.Helper;
 import one.mayumi.shruum.util.KeyStoreHelper;
 import one.mayumi.shruum.util.MoneroThreadPoolExecutor;
@@ -528,27 +527,6 @@ public class GenerateReviewFragment extends Fragment {
 
         LinearLayout llFingerprintAuth = promptsView.findViewById(R.id.llFingerprintAuth);
         final SwitchMaterial swFingerprintAllowed = (SwitchMaterial) llFingerprintAuth.getChildAt(0);
-        if (FingerprintHelper.isDeviceSupported(getActivity())) {
-            llFingerprintAuth.setVisibility(View.VISIBLE);
-
-            swFingerprintAllowed.setOnClickListener(view -> {
-                if (!swFingerprintAllowed.isChecked()) return;
-
-                AlertDialog.Builder builder = new MaterialAlertDialogBuilder(requireActivity());
-                builder.setMessage(Html.fromHtml(getString(R.string.generate_fingerprint_warn)))
-                        .setCancelable(false)
-                        .setPositiveButton(getString(R.string.label_ok), null)
-                        .setNegativeButton(getString(R.string.label_cancel), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                swFingerprintAllowed.setChecked(false);
-                            }
-                        })
-                        .show();
-            });
-
-            swFingerprintAllowed.setChecked(FingerprintHelper.isFingerPassValid(getActivity(), walletName));
-        }
 
         etPasswordA.getEditText().addTextChangedListener(new TextWatcher() {
             @Override

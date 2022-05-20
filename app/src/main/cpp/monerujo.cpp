@@ -1199,7 +1199,36 @@ Java_one_mayumi_shruum_model_Wallet_getLastSubaddress(JNIEnv *env, jobject insta
     return env->NewStringUTF(v[num - 1]->getAddress().c_str());
 }
 */
-//virtual std::string signMessage(const std::string &message) = 0;
+JNIEXPORT jstring JNICALL
+Java_one_mayumi_shruum_model_Wallet_signMessage(JNIEnv *env, jobject instance,
+                                                       jstring message) {
+
+    const char *_message = env->GetStringUTFChars(message, nullptr);
+
+    Bitmonero::Wallet *wallet = getHandle<Bitmonero::Wallet>(env, instance);
+
+    env->ReleaseStringUTFChars(message, _message);
+
+    return env->NewStringUTF(wallet->signMessage(_message).c_str());
+}
+
+JNIEXPORT jboolean JNICALL
+Java_one_mayumi_shruum_model_Wallet_verifySignedMessage(JNIEnv *env, jobject instance,
+                                                jstring message, jstring address, jstring signature) {
+
+    const char *_message = env->GetStringUTFChars(message, nullptr);
+    const char *_address = env->GetStringUTFChars(address, nullptr);
+    const char *_signature = env->GetStringUTFChars(signature, nullptr);
+
+    Bitmonero::Wallet *wallet = getHandle<Bitmonero::Wallet>(env, instance);
+    bool valid = wallet->verifySignedMessage(_message, _address, _signature);
+    env->ReleaseStringUTFChars(message, _message);
+    env->ReleaseStringUTFChars(address, _address);
+    env->ReleaseStringUTFChars(signature, _signature);
+
+    return static_cast<jboolean>(valid);
+}
+
 //virtual bool verifySignedMessage(const std::string &message, const std::string &addres, const std::string &signature) const = 0;
 
 //virtual bool parse_uri(const std::string &uri, std::string &address, std::string &payment_id, uint64_t &tvAmount, std::string &tx_description, std::string &recipient_name, std::vector<std::string> &unknown_parameters, std::string &error) = 0;

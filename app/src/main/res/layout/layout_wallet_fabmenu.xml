@@ -18,35 +18,35 @@
         android:id="@+id/fabScreen"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/fabL"
-        android:layout_alignEnd="@id/fabL"
+        android:layout_above="@id/fab_layout"
+        android:layout_alignEnd="@id/fab_layout"
         android:visibility="invisible">
 
         <RelativeLayout
-            android:id="@+id/fabNewL"
+            android:id="@+id/fab_sign_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@id/fabImportL"
-            android:layout_alignEnd="@id/fabImportL">
+            android:layout_above="@id/fab_verify_layout"
+            android:layout_alignEnd="@id/fab_verify_layout">
 
             <TextView
-                android:id="@+id/fabNewT"
+                android:id="@+id/fab_sign_textview"
                 style="@style/MoneroFab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="8dp"
-                android:text="@string/fab_receive" />
+                android:text="@string/fab_sign" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fabNew"
+                android:id="@+id/fab_sign"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
-                android:layout_toEndOf="@+id/fabNewT"
+                android:layout_toEndOf="@+id/fab_sign_textview"
                 android:elevation="6dp"
                 android:src="@drawable/ic_hand"
                 app:borderWidth="0dp"
@@ -57,14 +57,82 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/fabImportL"
+            android:id="@+id/fab_verify_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/fab_receive_layout"
+            android:layout_alignEnd="@id/fab_receive_layout">
+
+            <TextView
+                android:id="@+id/fab_verify_textview"
+                style="@style/MoneroFab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="8dp"
+                android:text="@string/fab_verify" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_verify"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_toEndOf="@+id/fab_verify_textview"
+                android:elevation="6dp"
+                android:src="@drawable/ic_hand"
+                app:borderWidth="0dp"
+                app:fabSize="mini"
+                android:enabled="false"
+                app:pressedTranslationZ="12dp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/fab_receive_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/fab_send_layout"
+            android:layout_alignEnd="@id/fab_send_layout">
+
+            <TextView
+                android:id="@+id/fab_receive_textview"
+                style="@style/MoneroFab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="8dp"
+                android:text="@string/fab_receive" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_receive"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_toEndOf="@+id/fab_receive_textview"
+                android:elevation="6dp"
+                android:src="@drawable/ic_hand"
+                app:borderWidth="0dp"
+                app:fabSize="mini"
+                android:enabled="false"
+                app:pressedTranslationZ="12dp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/fab_send_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true">
 
             <TextView
-                android:id="@+id/fabImportT"
+                android:id="@+id/fab_send_textview"
                 style="@style/MoneroFab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -73,14 +141,14 @@
                 android:text="@string/fab_send" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fabImport"
+                android:id="@+id/fab_send"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
-                android:layout_toEndOf="@+id/fabImportT"
+                android:layout_toEndOf="@+id/fab_send_textview"
                 android:elevation="6dp"
                 android:src="@drawable/ic_send"
                 app:borderWidth="0dp"
@@ -90,41 +158,10 @@
 
         </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/fabLedgerL"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/fabLedgerT"
-                style="@style/MoneroFab"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="8dp"
-                android:text="@string/fab_restore_ledger" />
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fabLedger"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:layout_toEndOf="@+id/fabLedgerT"
-                android:elevation="6dp"
-                android:src="@drawable/ic_ledger_restore"
-                app:borderWidth="0dp"
-                app:fabSize="mini"
-                app:pressedTranslationZ="12dp" />
-
-        </RelativeLayout>
-
     </RelativeLayout>
 
     <LinearLayout
-        android:id="@+id/fabL"
+        android:id="@+id/fab_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"

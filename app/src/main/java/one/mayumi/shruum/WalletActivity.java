@@ -342,7 +342,7 @@ public class WalletActivity extends BaseActivity implements WalletFragment.Liste
     private void onDisableStreetMode() {
         Helper.promptPassword(WalletActivity.this, getWallet().getName(), false, new Helper.PasswordAction() {
             @Override
-            public void act(String walletName, String password, boolean fingerprintUsed) {
+            public void act(String walletName, String password) {
                 runOnUiThread(() -> {
                     enableStreetMode(false);
                     updateStreetMode();
@@ -855,7 +855,7 @@ public class WalletActivity extends BaseActivity implements WalletFragment.Liste
 
                         Helper.promptPassword(WalletActivity.this, getWallet().getName(), true, new Helper.PasswordAction() {
                             @Override
-                            public void act(String walletName, String password, boolean fingerprintUsed) {
+                            public void act(String walletName, String password) {
                                 replaceFragment(new GenerateReviewFragment(), null, extras);
                             }
 
@@ -977,6 +977,22 @@ public class WalletActivity extends BaseActivity implements WalletFragment.Liste
         Bundle b = new Bundle();
         b.putString("address", address);
         b.putString("name", getWalletName());
+        replaceFragment(new ReceiveFragment(), null, b);
+        Timber.d("ReceiveFragment placed");
+    }
+
+    @Override
+    public void toSign(View view) {
+        Timber.d("startSign()");
+        Bundle b = new Bundle();
+        replaceFragment(new ReceiveFragment(), null, b);
+        Timber.d("ReceiveFragment placed");
+    }
+
+    @Override
+    public void toVerify(View view) {
+        Timber.d("startVerify()");
+        Bundle b = new Bundle();
         replaceFragment(new ReceiveFragment(), null, b);
         Timber.d("ReceiveFragment placed");
     }
