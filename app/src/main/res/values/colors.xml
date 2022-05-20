@@ -11,7 +11,7 @@
     <color name="classic_toolbarTextColor">#FFF6EF</color>
     <color name="classic_favouriteColor">@color/classic_gradientBottomColor</color>
     <color name="classic_softFavouriteColor">#ACACAC</color>
-    <color name="classic_positiveColor">#00C691</color>
+    <color name="classic_positiveColor">@android:color/holo_green_light</color>
     <color name="classic_negativeColor">#B31A1A</color>
     <color name="classic_neutralColor">@color/classic_positiveColor</color>
     <color name="classic_noticeColor">#1f4e97</color>
