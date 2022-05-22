@@ -23,15 +23,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.textfield.TextInputLayout;
 
 import one.mayumi.shruum.model.Wallet;
 import one.mayumi.shruum.model.WalletManager;
+import one.mayumi.shruum.widget.Toolbar;
 import timber.log.Timber;
 
 public class VerifySignatureFragment extends Fragment {
+    ReceiveFragment.Listener listenerCallback = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -60,5 +63,23 @@ public class VerifySignatureFragment extends Fragment {
             }
         });
         return view;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof ReceiveFragment.Listener) {
+            this.listenerCallback = (ReceiveFragment.Listener) context;
+        } else {
+            throw new ClassCastException(context.toString()
+                    + " must implement Listener");
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Timber.d("onResume()");
+        listenerCallback.setToolbarButton(Toolbar.BUTTON_BACK);
     }
 }

@@ -16,6 +16,7 @@
 
 package one.mayumi.shruum;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.textfield.TextInputLayout;
@@ -31,12 +33,14 @@ import one.mayumi.shruum.model.Wallet;
 import one.mayumi.shruum.model.WalletManager;
 import one.mayumi.shruum.util.Helper;
 
+import one.mayumi.shruum.widget.Toolbar;
 import timber.log.Timber;
 
 public class SignMessageFragment extends Fragment {
 
     private String signature;
     private String address;
+    ReceiveFragment.Listener listenerCallback = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -61,6 +65,24 @@ public class SignMessageFragment extends Fragment {
         view.findViewById(R.id.button_copy_address).setOnClickListener(view1 -> copyAddress());
         view.findViewById(R.id.button_copy_signature).setOnClickListener(view1 -> copySignature());
         return view;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof ReceiveFragment.Listener) {
+            this.listenerCallback = (ReceiveFragment.Listener) context;
+        } else {
+            throw new ClassCastException(context.toString()
+                    + " must implement Listener");
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Timber.d("onResume()");
+        listenerCallback.setToolbarButton(Toolbar.BUTTON_BACK);
     }
 
     void copySignature() {
