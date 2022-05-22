@@ -37,7 +37,6 @@ public class Node {
     static public final String TESTNET = "testnet";
 
     static class Address {
-        final private InetAddress inet;
         final private String onion;
 
         public boolean isOnion() {
@@ -45,36 +44,19 @@ public class Node {
         }
 
         public String getHostName() {
-            if (inet != null) {
-                return inet.getHostName();
-            } else {
-                return onion;
-            }
+            return onion;
         }
 
         public String getHostAddress() {
-            if (inet != null) {
-                return inet.getHostAddress();
-            } else {
-                return onion;
-            }
+            return onion;
         }
 
-        private Address(InetAddress address, String onion) {
-            this.inet = address;
+        private Address(String onion) {
             this.onion = onion;
         }
 
-        static Address of(InetAddress address) {
-            return new Address(address, null);
-        }
-
-        static Address of(String host) throws UnknownHostException {
-            if (OnionHelper.isOnionHost(host)) {
-                return new Address(null, host);
-            } else {
-                return new Address(InetAddress.getByName(host), null);
-            }
+        static Address of(String host) {
+            return new Address(host);
         }
 
         @Override
@@ -129,15 +111,6 @@ public class Node {
 
     public boolean isOnion() {
         return hostAddress.isOnion();
-    }
-
-    static public Node fromString(String nodeString) {
-        try {
-            return new Node(nodeString);
-        } catch (IllegalArgumentException ex) {
-            Timber.w(ex);
-            return null;
-        }
     }
 
     Node(String nodeString) {
@@ -262,7 +235,7 @@ public class Node {
     // constructor used for created nodes from retrieved peer lists
     public Node(InetSocketAddress socketAddress) {
         this();
-        this.hostAddress = Address.of(socketAddress.getAddress());
+        this.hostAddress = Address.of(socketAddress.getAddress().getHostAddress());
         this.host = socketAddress.getHostString();
         this.rpcPort = 0; // unknown
         this.levinPort = socketAddress.getPort();
@@ -288,7 +261,7 @@ public class Node {
     public void setDefaultName() {
         if (name != null) return;
         String nodeName = hostAddress.getHostName();
-        if (hostAddress.isOnion()) {
+        if (isOnion()) {
             nodeName = nodeName.substring(0, nodeName.length() - ".onion".length());
             if (nodeName.length() > 16) {
                 nodeName = nodeName.substring(0, 8) + "…" + nodeName.substring(nodeName.length() - 6);

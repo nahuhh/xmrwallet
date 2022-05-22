@@ -210,7 +210,7 @@ public class NodeInfo extends Node {
         if (!this.isOnion()) return false;
         Timber.d("Testing %s", toNodeString());
         clear();
-        if (hostAddress.isOnion() && !NetCipherHelper.isTor()) {
+        if (isOnion() && !NetCipherHelper.isTor()) {
             tested = true; // sortof
             responseCode = 418; // I'm a teapot - or I need an Onion - who knows
             return false; // autofail
@@ -279,7 +279,7 @@ public class NodeInfo extends Node {
         final Spanned text = Html.fromHtml(ctx.getString(R.string.status,
                 Integer.toHexString(ThemeHelper.getThemedColor(ctx, R.attr.positiveColor) & 0xFFFFFF),
                 Integer.toHexString(ThemeHelper.getThemedColor(ctx, android.R.attr.colorBackground) & 0xFFFFFF),
-                (hostAddress.isOnion() ? "&nbsp;.onion&nbsp;&nbsp;" : ""), " " + info));
+                (isOnion() ? "&nbsp;.onion&nbsp;&nbsp;" : ""), " " + info));
         view.setText(text);
         if (isError)
             view.setTextColor(ThemeHelper.getThemedColor(ctx, R.attr.colorError));

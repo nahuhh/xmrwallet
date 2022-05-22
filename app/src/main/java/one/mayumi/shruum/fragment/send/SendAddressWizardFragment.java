@@ -43,7 +43,6 @@ import one.mayumi.shruum.data.UserNotes;
 import one.mayumi.shruum.model.PendingTransaction;
 import one.mayumi.shruum.model.Wallet;
 import one.mayumi.shruum.util.Helper;
-import one.mayumi.shruum.util.OpenAliasHelper;
 import one.mayumi.shruum.util.ServiceHelper;
 
 import java.util.Map;
@@ -104,16 +103,6 @@ public class SendAddressWizardFragment extends SendWizardFragment {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 // ignore ENTER
                 return ((event != null) && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER));
-            }
-        });
-        etAddress.getEditText().setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
-                String enteredAddress = etAddress.getEditText().getText().toString().trim();
-                String dnsOA = dnsFromOpenAlias(enteredAddress);
-                Timber.d("OpenAlias is %s", dnsOA);
-                if (dnsOA != null) {
-                    processOpenAlias(dnsOA);
-                }
             }
         });
         etAddress.getEditText().addTextChangedListener(new TextWatcher() {
@@ -184,36 +173,6 @@ public class SendAddressWizardFragment extends SendWizardFragment {
         return view;
     }
 
-    private void processOpenAlias(String dnsOA) {
-        if (resolvingOA) return; // already resolving - just wait
-        sendListener.popBarcodeData();
-        if (dnsOA != null) {
-            resolvingOA = true;
-            etAddress.setError(getString(R.string.send_address_resolve_openalias));
-            OpenAliasHelper.resolve(dnsOA, new OpenAliasHelper.OnResolvedListener() {
-                @Override
-                public void onResolved(Map<Crypto, BarcodeData> dataMap) {
-                    resolvingOA = false;
-                    BarcodeData barcodeData = dataMap.get(Crypto.XMR);
-                    if (barcodeData != null) {
-                        Timber.d("Security=%s, %s", barcodeData.security.toString(), barcodeData.address);
-                        processScannedData(barcodeData);
-                    } else {
-                        etAddress.setError(getString(R.string.send_address_not_openalias));
-                        Timber.d("NO XMR OPENALIAS TXT FOUND");
-                    }
-                }
-
-                @Override
-                public void onFailure() {
-                    resolvingOA = false;
-                    etAddress.setError(getString(R.string.send_address_not_openalias));
-                    Timber.e("OA FAILED");
-                }
-            });
-        } // else ignore
-    }
-
     private boolean checkAddressNoError() {
         return selectedCrypto != null;
     }
@@ -245,12 +204,6 @@ public class SendAddressWizardFragment extends SendWizardFragment {
     public boolean onValidateFields() {
         if (!checkAddressNoError()) {
             shakeAddress();
-            String enteredAddress = etAddress.getEditText().getText().toString().trim();
-            String dnsOA = dnsFromOpenAlias(enteredAddress);
-            Timber.d("OpenAlias is %s", dnsOA);
-            if (dnsOA != null) {
-                processOpenAlias(dnsOA);
-            }
             return false;
         }
 
@@ -340,15 +293,5 @@ public class SendAddressWizardFragment extends SendWizardFragment {
         super.onResumeFragment();
         Timber.d("onResumeFragment()");
         etDummy.requestFocus();
-    }
-
-    String dnsFromOpenAlias(String openalias) {
-        Timber.d("checking openalias candidate %s", openalias);
-        if (Patterns.DOMAIN_NAME.matcher(openalias).matches()) return openalias;
-        if (Patterns.EMAIL_ADDRESS.matcher(openalias).matches()) {
-            openalias = openalias.replaceFirst("@", ".");
-            if (Patterns.DOMAIN_NAME.matcher(openalias).matches()) return openalias;
-        }
-        return null; // not an openalias
     }
 }

@@ -18,8 +18,6 @@ package one.mayumi.shruum.data;
 
 import android.net.Uri;
 
-import one.mayumi.shruum.util.OpenAliasHelper;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -175,55 +173,7 @@ public class BarcodeData {
             // maybe it's naked?
             bcData = parseNaked(qrCode);
         }
-        if (bcData == null) {
-            // check for OpenAlias
-            bcData = parseOpenAlias(qrCode, false);
-        }
         return bcData;
-    }
-
-    static public BarcodeData parseOpenAlias(String oaString, boolean dnssec) {
-        Timber.d("parseOpenAlias=%s", oaString);
-        if (oaString == null) return null;
-
-        Map<String, String> oaAttrs = OpenAliasHelper.parse(oaString);
-        if (oaAttrs == null) return null;
-
-        String oaAsset = oaAttrs.get(OpenAliasHelper.OA1_ASSET);
-        if (oaAsset == null) return null;
-
-        String address = oaAttrs.get(OpenAliasHelper.OA1_ADDRESS);
-        if (address == null) return null;
-
-        Crypto crypto = Crypto.withSymbol(oaAsset);
-        if (crypto == null) {
-            Timber.i("Unsupported OpenAlias asset %s", oaAsset);
-            return null;
-        }
-        if (!crypto.validate(address)) {
-            Timber.d("%s address invalid", crypto);
-            return null;
-        }
-
-        String description = oaAttrs.get(OpenAliasHelper.OA1_DESCRIPTION);
-        if (description == null) {
-            description = oaAttrs.get(OpenAliasHelper.OA1_NAME);
-        }
-        String amount = oaAttrs.get(OpenAliasHelper.OA1_AMOUNT);
-        String addressName = oaAttrs.get(OpenAliasHelper.OA1_NAME);
-
-        if (amount != null) {
-            try {
-                Double.parseDouble(amount);
-            } catch (NumberFormatException ex) {
-                Timber.d(ex.getLocalizedMessage());
-                return null; // we have an amount but its not a number!
-            }
-        }
-
-        Security sec = dnssec ? BarcodeData.Security.OA_DNSSEC : BarcodeData.Security.OA_NO_DNSSEC;
-
-        return new BarcodeData(crypto, address, addressName, description, amount, sec);
     }
 
     public boolean isAmbiguous() {
