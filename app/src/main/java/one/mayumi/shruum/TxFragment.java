@@ -223,10 +223,8 @@ public class TxFragment extends Fragment {
             tvTxConfirmations.setText("0");
             tvTxBlockheight.setText(getString(R.string.tx_pending));
         } else {
-            long blockchainHeight = WalletManager.getInstance().getWallet().getBlockChainHeight();
-            long confirmations = (blockchainHeight - info.blockheight) + 1;
             tvTxBlockheight.setText("" + info.blockheight);
-            tvTxConfirmations.setText("" + confirmations);
+            tvTxConfirmations.setText("" + info.confirmations);
         }
         String sign = (info.direction == TransactionInfo.Direction.Direction_In ? "+" : "-");
 

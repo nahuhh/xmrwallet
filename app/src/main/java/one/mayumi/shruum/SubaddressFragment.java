@@ -68,6 +68,8 @@ public class SubaddressFragment extends Fragment implements SubaddressInfoAdapte
         void showSubaddress(View view, final int subaddressIndex);
 
         void saveWallet();
+
+        boolean isStreetMode();
     }
 
     public interface ProgressListener {
@@ -124,7 +126,7 @@ public class SubaddressFragment extends Fragment implements SubaddressInfoAdapte
         }
 
         final RecyclerView list = view.findViewById(R.id.list);
-        adapter = new SubaddressInfoAdapter(getActivity(), this);
+        adapter = new SubaddressInfoAdapter(getActivity(), this, activityCallback.isStreetMode());
         list.setAdapter(adapter);
         adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override

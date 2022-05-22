@@ -45,13 +45,15 @@ public class SubaddressInfoAdapter extends RecyclerView.Adapter<SubaddressInfoAd
 
     private final List<Subaddress> items;
     private final OnInteractionListener listener;
+    private final boolean streetMode;
 
     Context context;
 
-    public SubaddressInfoAdapter(Context context, OnInteractionListener listener) {
+    public SubaddressInfoAdapter(Context context, OnInteractionListener listener, boolean streetMode) {
         this.context = context;
         this.items = new ArrayList<>();
         this.listener = listener;
+        this.streetMode = streetMode;
     }
 
     private static class SubaddressInfoDiff extends DiffCallback<Subaddress> {
@@ -81,7 +83,7 @@ public class SubaddressInfoAdapter extends RecyclerView.Adapter<SubaddressInfoAd
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.bind(position);
+        holder.bind(position, streetMode);
     }
 
     @Override
@@ -123,7 +125,7 @@ public class SubaddressInfoAdapter extends RecyclerView.Adapter<SubaddressInfoAd
             itemView.setOnLongClickListener(this);
         }
 
-        void bind(int position) {
+        void bind(int position, boolean streetMode) {
             item = getItem(position);
             itemView.setTransitionName(context.getString(R.string.subaddress_item_transition_name, item.getAddressIndex()));
 
@@ -134,8 +136,12 @@ public class SubaddressInfoAdapter extends RecyclerView.Adapter<SubaddressInfoAd
             tvAddress.setText(address);
             final long amount = item.getAmount();
             if (amount > 0)
-                tvAmount.setText(context.getString(R.string.tx_list_amount_positive,
-                        Helper.getDisplayAmount(amount, Helper.DISPLAY_DIGITS_INFO)));
+                if(streetMode) {
+                    tvAmount.setText(context.getString(R.string.tx_list_amount_positive_street_mode));
+                } else {
+                    tvAmount.setText(context.getString(R.string.tx_list_amount_positive,
+                            Helper.getDisplayAmount(amount, Helper.DISPLAY_DIGITS_INFO)));
+                }
             else
                 tvAmount.setText("");
         }

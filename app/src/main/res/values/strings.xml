@@ -256,6 +256,7 @@
     <string name="tx_list_failed_text">failed</string>
     <string name="tx_list_amount_negative">- %1$s</string>
     <string name="tx_list_amount_positive">+ %1$s</string>
+    <string name="tx_list_amount_positive_street_mode">+ ---</string>
 
     <string name="tx_timestamp">Timestamp</string>
     <string name="tx_id">TX ID</string>
