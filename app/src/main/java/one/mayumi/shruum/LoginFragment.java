@@ -399,10 +399,6 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
         }
     }
 
-    public void findBestNode() {
-        new AsyncFindBestNode().execute(AsyncFindBestNode.FIND_BEST);
-    }
-
     public void pingSelectedNode() {
         new AsyncFindBestNode().execute(AsyncFindBestNode.PING_SELECTED);
     }
