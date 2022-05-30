@@ -307,10 +307,14 @@ public class WalletActivity extends BaseActivity implements WalletFragment.Liste
         } else if (itemId == R.id.action_subaddresses) {
             showSubaddresses(true);
         } else if (itemId == R.id.action_streetmode) {
-            if (isStreetMode()) { // disable streetmode
-                onDisableStreetMode();
+            if(isSynced()) {
+                if (isStreetMode()) { // disable streetmode
+                    onDisableStreetMode();
+                } else {
+                    onEnableStreetMode();
+                }
             } else {
-                onEnableStreetMode();
+                Toast.makeText(getCurrentFragment().getActivity(), R.string.streetmode_unsynced, Toast.LENGTH_SHORT).show();
             }
         } else
             return super.onOptionsItemSelected(item);

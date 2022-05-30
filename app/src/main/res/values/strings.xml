@@ -547,4 +547,5 @@
     <string name="sign_signature_hint">Signature</string>
     <string name="invalid_signature">Signature is NOT valid.</string>
     <string name="valid_signature">Signature is valid.</string>
+    <string name="streetmode_unsynced">Please wait until wallet is finished syncing.</string>
 </resources>
