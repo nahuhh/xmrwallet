@@ -71,7 +71,6 @@ public class NodeFragment extends Fragment
     static private NumberFormat FORMATTER = NumberFormat.getInstance();
 
     private SwipeRefreshLayout pullToRefresh;
-    private TextView tvPull;
     private View fab;
 
     private Set<NodeInfo> nodeList = new HashSet<>();
@@ -159,12 +158,10 @@ public class NodeFragment extends Fragment
         nodesAdapter = new NodeInfoAdapter(getActivity(), this);
         recyclerView.setAdapter(nodesAdapter);
 
-        tvPull = view.findViewById(R.id.tvPull);
-
         pullToRefresh = view.findViewById(R.id.pullToRefresh);
         pullToRefresh.setOnRefreshListener(() -> {
             if (WalletManager.getInstance().getNetworkType() == NetworkType.NetworkType_Mainnet) {
-                refresh(AsyncFindNodes.SCAN);
+                refresh(AsyncFindNodes.PING);
             } else {
                 Toast.makeText(getActivity(), getString(R.string.node_wrong_net), Toast.LENGTH_LONG).show();
                 pullToRefresh.setRefreshing(false);
@@ -264,7 +261,6 @@ public class NodeFragment extends Fragment
             filterFavourites();
             nodesAdapter.setNodes(null);
             nodesAdapter.allowClick(false);
-            tvPull.setText(getString(R.string.node_scanning));
         }
 
         @Override
@@ -332,7 +328,6 @@ public class NodeFragment extends Fragment
             asyncFindNodes = null;
             if (!isAdded()) return;
             //if (isCancelled()) return;
-            tvPull.setText(getString(R.string.node_pull_hint));
             pullToRefresh.setRefreshing(false);
             nodesAdapter.setNodes(nodeList);
             nodesAdapter.allowClick(true);
