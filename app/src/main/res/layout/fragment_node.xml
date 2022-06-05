@@ -13,22 +13,11 @@
         android:layout_alignParentTop="true"
         android:orientation="vertical" />
 
-    <TextView
-        android:id="@+id/tvPull"
-        style="@style/MoneroLabel.Heading"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/llNotice"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"
-        android:gravity="center"
-        android:text="@string/node_pull_hint" />
-
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/pullToRefresh"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvPull">
+        android:layout_below="@id/llNotice">
 
         <LinearLayout
             android:layout_width="match_parent"

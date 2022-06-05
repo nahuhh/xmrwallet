@@ -215,7 +215,7 @@ public class NodeInfo extends Node {
             responseCode = 418; // I'm a teapot - or I need an Onion - who knows
             return false; // autofail
         }
-        long triesLeft = 5;
+        long triesLeft = 3;
         while (triesLeft > 0) {
             try {
                 long ta = System.nanoTime();

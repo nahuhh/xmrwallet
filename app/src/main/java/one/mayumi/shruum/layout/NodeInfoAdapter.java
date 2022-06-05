@@ -153,22 +153,12 @@ public class NodeInfoAdapter extends RecyclerView.Adapter<NodeInfoAdapter.ViewHo
             ivPing = itemView.findViewById(R.id.ivPing);
             ibBookmark.setOnClickListener(v -> {
                 nodeItem.toggleFavourite();
-                showStar();
-                if (!nodeItem.isFavourite()) {
-                    nodeItem.setSelected(false);
-                    setNodes(nodeItems);
-                }
+                setNodes(nodeItems);
+                nodeItems.remove(nodeItem);
+                notifyDataSetChanged();
             });
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
-        }
-
-        private void showStar() {
-            if (nodeItem.isFavourite()) {
-                ibBookmark.setImageResource(R.drawable.ic_favorite_24dp);
-            } else {
-                ibBookmark.setImageResource(R.drawable.ic_favorite_border_24dp);
-            }
         }
 
         void bind(int position) {
@@ -189,7 +179,6 @@ public class NodeInfoAdapter extends RecyclerView.Adapter<NodeInfoAdapter.ViewHo
             itemView.setEnabled(itemsClickable);
             ibBookmark.setClickable(itemsClickable);
             pbBookmark.setVisibility(nodeItem.isSelecting() ? View.VISIBLE : View.INVISIBLE);
-            showStar();
         }
 
         @Override

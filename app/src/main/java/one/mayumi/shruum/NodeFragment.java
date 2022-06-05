@@ -39,7 +39,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
-import one.mayumi.levin.scanner.Dispatcher;
 import one.mayumi.shruum.data.DefaultNodes;
 import one.mayumi.shruum.data.Node;
 import one.mayumi.shruum.data.NodeInfo;
@@ -71,7 +70,6 @@ public class NodeFragment extends Fragment
     static private NumberFormat FORMATTER = NumberFormat.getInstance();
 
     private SwipeRefreshLayout pullToRefresh;
-    private TextView tvPull;
     private View fab;
 
     private Set<NodeInfo> nodeList = new HashSet<>();
@@ -159,12 +157,10 @@ public class NodeFragment extends Fragment
         nodesAdapter = new NodeInfoAdapter(getActivity(), this);
         recyclerView.setAdapter(nodesAdapter);
 
-        tvPull = view.findViewById(R.id.tvPull);
-
         pullToRefresh = view.findViewById(R.id.pullToRefresh);
         pullToRefresh.setOnRefreshListener(() -> {
             if (WalletManager.getInstance().getNetworkType() == NetworkType.NetworkType_Mainnet) {
-                refresh(AsyncFindNodes.SCAN);
+                refresh(AsyncFindNodes.PING);
             } else {
                 Toast.makeText(getActivity(), getString(R.string.node_wrong_net), Toast.LENGTH_LONG).show();
                 pullToRefresh.setRefreshing(false);
@@ -254,7 +250,6 @@ public class NodeFragment extends Fragment
 
     private class AsyncFindNodes extends AsyncTask<Integer, NodeInfo, Boolean>
             implements NodePinger.Listener {
-        final static int SCAN = 0;
         final static int RESTORE_DEFAULTS = 1;
         final static int PING = 2;
 
@@ -264,7 +259,6 @@ public class NodeFragment extends Fragment
             filterFavourites();
             nodesAdapter.setNodes(null);
             nodesAdapter.allowClick(false);
-            tvPull.setText(getString(R.string.node_scanning));
         }
 
         @Override
@@ -272,7 +266,7 @@ public class NodeFragment extends Fragment
             if (params[0] == RESTORE_DEFAULTS) { // true = restore defaults
                 for (DefaultNodes node : DefaultNodes.values()) {
                     NodeInfo nodeInfo = NodeInfo.fromString(node.getUri());
-                    if (nodeInfo != null && nodeInfo.isOnion()) {
+                    if (nodeInfo != null && nodeInfo.isOnion() && nodeList.contains(nodeInfo)) {
                         nodeInfo.setFavourite(true);
                         nodeList.add(nodeInfo);
                     }
@@ -281,26 +275,6 @@ public class NodeFragment extends Fragment
                 return true;
             } else if (params[0] == PING) {
                 NodePinger.execute(nodeList, this);
-                return true;
-            } else if (params[0] == SCAN) {
-                // otherwise scan the network
-                Timber.d("scanning");
-                Set<NodeInfo> seedList = new HashSet<>();
-                seedList.addAll(nodeList);
-                nodeList.clear();
-                Timber.d("seed %d", seedList.size());
-                Dispatcher d = new Dispatcher(info -> publishProgress(info));
-                d.seedPeers(seedList);
-                d.awaitTermination(NODES_TO_FIND);
-
-                // final (filtered) result
-                ArrayList<NodeInfo> onionNodes = new ArrayList<>();
-                for(NodeInfo node : d.getRpcNodes()) {
-                    if(node.isValid() && node.isOnion()) {
-                        onionNodes.add(node);
-                    }
-                }
-                nodeList.addAll(onionNodes);
                 return true;
             }
             return false;
@@ -332,7 +306,6 @@ public class NodeFragment extends Fragment
             asyncFindNodes = null;
             if (!isAdded()) return;
             //if (isCancelled()) return;
-            tvPull.setText(getString(R.string.node_pull_hint));
             pullToRefresh.setRefreshing(false);
             nodesAdapter.setNodes(nodeList);
             nodesAdapter.allowClick(true);
