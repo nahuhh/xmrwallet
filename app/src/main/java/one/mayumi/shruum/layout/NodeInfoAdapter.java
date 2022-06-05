@@ -137,7 +137,6 @@ public class NodeInfoAdapter extends RecyclerView.Adapter<NodeInfoAdapter.ViewHo
     }
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-        final ImageButton ibBookmark;
         final View pbBookmark;
         final TextView tvName;
         final TextView tvInfo;
@@ -146,29 +145,12 @@ public class NodeInfoAdapter extends RecyclerView.Adapter<NodeInfoAdapter.ViewHo
 
         ViewHolder(View itemView) {
             super(itemView);
-            ibBookmark = itemView.findViewById(R.id.ibBookmark);
             pbBookmark = itemView.findViewById(R.id.pbBookmark);
             tvName = itemView.findViewById(R.id.tvName);
             tvInfo = itemView.findViewById(R.id.tvInfo);
             ivPing = itemView.findViewById(R.id.ivPing);
-            ibBookmark.setOnClickListener(v -> {
-                nodeItem.toggleFavourite();
-                showStar();
-                if (!nodeItem.isFavourite()) {
-                    nodeItem.setSelected(false);
-                    setNodes(nodeItems);
-                }
-            });
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
-        }
-
-        private void showStar() {
-            if (nodeItem.isFavourite()) {
-                ibBookmark.setImageResource(R.drawable.ic_favorite_24dp);
-            } else {
-                ibBookmark.setImageResource(R.drawable.ic_favorite_border_24dp);
-            }
         }
 
         void bind(int position) {
@@ -187,9 +169,7 @@ public class NodeInfoAdapter extends RecyclerView.Adapter<NodeInfoAdapter.ViewHo
             itemView.setSelected(nodeItem.isSelected());
             itemView.setClickable(itemsClickable);
             itemView.setEnabled(itemsClickable);
-            ibBookmark.setClickable(itemsClickable);
             pbBookmark.setVisibility(nodeItem.isSelecting() ? View.VISIBLE : View.INVISIBLE);
-            showStar();
         }
 
         @Override

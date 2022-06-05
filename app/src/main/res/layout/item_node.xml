@@ -14,17 +14,6 @@
         android:layout_alignParentStart="true"
         android:layout_centerInParent="true">
 
-        <ImageButton
-            android:id="@+id/ibBookmark"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:gravity="center"
-            android:padding="12dp"
-            android:src="@drawable/ic_favorite_border_24dp" />
-
         <ProgressBar
             android:id="@+id/pbBookmark"
             android:layout_width="match_parent"
