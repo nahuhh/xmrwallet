@@ -68,6 +68,7 @@ import com.m2049r.xmrwallet.util.ThemeHelper;
 import com.m2049r.xmrwallet.widget.Toolbar;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import timber.log.Timber;
@@ -102,6 +103,8 @@ public class WalletActivity extends BaseActivity implements WalletFragment.Liste
     private String uri = null;
 
     private long streetMode = 0;
+
+    private HashMap<String, Integer> subAddresses = new HashMap<>();
 
     @Override
     public void onPasswordChanged(String newPassword) {

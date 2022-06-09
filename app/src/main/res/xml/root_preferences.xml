@@ -7,6 +7,13 @@
             app:title="@string/menu_language"
             app:useSimpleSummaryProvider="true" />
         <ListPreference
+            app:defaultValue="true"
+            app:entries="@array/connectivity_check_entries"
+            app:entryValues="@array/connectivity_check_values"
+            app:key="@string/enable_rpc_check"
+            app:title="@string/menu_connectivity_check"
+            app:useSimpleSummaryProvider="true" />
+        <ListPreference
             app:defaultValue="AUTO"
             app:entries="@array/daynight_themes"
             app:entryValues="@array/daynight_values"

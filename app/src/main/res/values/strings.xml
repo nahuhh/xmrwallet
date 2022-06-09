@@ -7,6 +7,7 @@
     <string name="menu_privacy">Privacy Policy</string>
 
     <string name="menu_share">Share</string>
+    <string name="menu_networking">Network</string>
     <string name="menu_help">Help</string>
     <string name="menu_receive">Receive</string>
     <string name="menu_rename">Rename</string>
@@ -139,6 +140,7 @@
     <string name="label_wallet_receive">Receive</string>
     <string name="label_wallet_send">Give</string>
 
+    <string name="xmr_confirmed_amount">%1$s</string>
     <string name="xmr_unconfirmed_amount">+ %1$s XMR unconfirmed</string>
 
     <string name="service_description">monerujo Service</string>
@@ -334,7 +336,11 @@
     <string name="send_sweepall">Send all confirmed funds in this account!</string>
     <string name="tx_subaddress">Subaddress</string>
     <string name="generate_address_label_sub">Public Subaddress #%1$d: %2$s</string>
-
+    <string name="menu_connectivity_check">Connectivity Check</string>
+    <string-array name="connectivity_check_entries">
+        <item>Enabled</item>
+        <item>Disabled</item>
+    </string-array>
     <string name="menu_language">Language</string>
     <string name="language_system_default">Use System Language</string>
 
@@ -510,6 +516,7 @@
     <string name="preferred_theme" translatable="false">preferred_theme</string>
     <string name="preferred_nightmode" translatable="false">preferred_nightmode</string>
     <string name="preferred_locale" translatable="false">preferred_locale</string>
+    <string name="enable_rpc_check" translatable="false">enable_rpc_check</string>
     <string name="about_info" translatable="false">about_info</string>
     <string name="privacy_info" translatable="false">privacy_info</string>
     <string name="credits_info" translatable="false">credits_info</string>

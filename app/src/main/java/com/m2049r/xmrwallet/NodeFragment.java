@@ -39,7 +39,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
-import com.m2049r.levin.scanner.Dispatcher;
 import com.m2049r.xmrwallet.data.DefaultNodes;
 import com.m2049r.xmrwallet.data.Node;
 import com.m2049r.xmrwallet.data.NodeInfo;
@@ -55,6 +54,7 @@ import java.io.File;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -70,7 +70,6 @@ public class NodeFragment extends Fragment
     static private NumberFormat FORMATTER = NumberFormat.getInstance();
 
     private SwipeRefreshLayout pullToRefresh;
-    private TextView tvPull;
     private View fab;
 
     private Set<NodeInfo> nodeList = new HashSet<>();
@@ -158,12 +157,10 @@ public class NodeFragment extends Fragment
         nodesAdapter = new NodeInfoAdapter(getActivity(), this);
         recyclerView.setAdapter(nodesAdapter);
 
-        tvPull = view.findViewById(R.id.tvPull);
-
         pullToRefresh = view.findViewById(R.id.pullToRefresh);
         pullToRefresh.setOnRefreshListener(() -> {
             if (WalletManager.getInstance().getNetworkType() == NetworkType.NetworkType_Mainnet) {
-                refresh(AsyncFindNodes.SCAN);
+                refresh(AsyncFindNodes.PING);
             } else {
                 Toast.makeText(getActivity(), getString(R.string.node_wrong_net), Toast.LENGTH_LONG).show();
                 pullToRefresh.setRefreshing(false);
@@ -248,7 +245,6 @@ public class NodeFragment extends Fragment
 
     private class AsyncFindNodes extends AsyncTask<Integer, NodeInfo, Boolean>
             implements NodePinger.Listener {
-        final static int SCAN = 0;
         final static int RESTORE_DEFAULTS = 1;
         final static int PING = 2;
 
@@ -258,7 +254,6 @@ public class NodeFragment extends Fragment
             filterFavourites();
             nodesAdapter.setNodes(null);
             nodesAdapter.allowClick(false);
-            tvPull.setText(getString(R.string.node_scanning));
         }
 
         @Override
@@ -275,44 +270,6 @@ public class NodeFragment extends Fragment
                 return true;
             } else if (params[0] == PING) {
                 NodePinger.execute(nodeList, this);
-                return true;
-            } else if (params[0] == SCAN) {
-                // otherwise scan the network
-                Timber.d("scanning");
-                Set<NodeInfo> seedList = new HashSet<>();
-                seedList.addAll(nodeList);
-                nodeList.clear();
-                Timber.d("seed %d", seedList.size());
-                Dispatcher d = new Dispatcher(info -> publishProgress(info));
-                d.seedPeers(seedList);
-                d.awaitTermination(NODES_TO_FIND);
-
-                // we didn't find enough because we didn't ask around enough? ask more!
-                if ((d.getRpcNodes().size() < NODES_TO_FIND) &&
-                        (d.getPeerCount() < NODES_TO_FIND + seedList.size())) {
-                    // try again
-                    publishProgress((NodeInfo[]) null);
-                    d = new Dispatcher(new Dispatcher.Listener() {
-                        @Override
-                        public void onGet(NodeInfo info) {
-                            publishProgress(info);
-                        }
-                    });
-                    // also seed with monero seed nodes (see p2p/net_node.inl:410 in monero src)
-                    seedList.add(new NodeInfo(new InetSocketAddress("107.152.130.98", 18080)));
-                    seedList.add(new NodeInfo(new InetSocketAddress("212.83.175.67", 18080)));
-                    seedList.add(new NodeInfo(new InetSocketAddress("5.9.100.248", 18080)));
-                    seedList.add(new NodeInfo(new InetSocketAddress("163.172.182.165", 18080)));
-                    seedList.add(new NodeInfo(new InetSocketAddress("161.67.132.39", 18080)));
-                    seedList.add(new NodeInfo(new InetSocketAddress("198.74.231.92", 18080)));
-                    seedList.add(new NodeInfo(new InetSocketAddress("195.154.123.123", 18080)));
-                    seedList.add(new NodeInfo(new InetSocketAddress("212.83.172.165", 18080)));
-                    seedList.add(new NodeInfo(new InetSocketAddress("192.110.160.146", 18080)));
-                    d.seedPeers(seedList);
-                    d.awaitTermination(NODES_TO_FIND);
-                }
-                // final (filtered) result
-                nodeList.addAll(d.getRpcNodes());
                 return true;
             }
             return false;
@@ -344,7 +301,6 @@ public class NodeFragment extends Fragment
             asyncFindNodes = null;
             if (!isAdded()) return;
             //if (isCancelled()) return;
-            tvPull.setText(getString(R.string.node_pull_hint));
             pullToRefresh.setRefreshing(false);
             nodesAdapter.setNodes(nodeList);
             nodesAdapter.allowClick(true);

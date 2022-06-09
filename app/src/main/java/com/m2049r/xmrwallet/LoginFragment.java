@@ -16,7 +16,13 @@
 
 package com.m2049r.xmrwallet;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
+import android.graphics.PorterDuff;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
@@ -38,7 +44,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -46,6 +54,7 @@ import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.m2049r.xmrwallet.data.NodeInfo;
 import com.m2049r.xmrwallet.dialog.HelpFragment;
 import com.m2049r.xmrwallet.layout.WalletInfoAdapter;
+import com.m2049r.xmrwallet.model.NetworkType;
 import com.m2049r.xmrwallet.model.WalletManager;
 import com.m2049r.xmrwallet.util.Helper;
 import com.m2049r.xmrwallet.util.KeyStoreHelper;
@@ -78,6 +87,7 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
     private CircularProgressIndicator pbNetwork;
 
     private Listener activityCallback;
+    private Menu menu;
 
     // Container Activity must implement this interface
     public interface Listener {
@@ -158,6 +168,7 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
         tvGuntherSays = view.findViewById(R.id.tvGuntherSays);
         ivGunther = view.findViewById(R.id.ivGunther);
         fabScreen = view.findViewById(R.id.fabScreen);
+        fabBackground = view.findViewById(R.id.fabBackground);
         fab = view.findViewById(R.id.fab);
         fabNew = view.findViewById(R.id.fabNew);
         fabView = view.findViewById(R.id.fabView);
@@ -188,6 +199,7 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
         fabImport.setOnClickListener(this);
         fabLedger.setOnClickListener(this);
         fabScreen.setOnClickListener(this);
+        fabBackground.setOnClickListener(this);
 
         RecyclerView recyclerView = view.findViewById(R.id.list);
         registerForContextMenu(recyclerView);
@@ -219,6 +231,17 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
     @Override
     public void onInteraction(final View view, final WalletManager.WalletInfo infoItem) {
         openWallet(infoItem.getName(), false);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        final int id = item.getItemId();
+        if (id == R.id.action_network_settings) {
+            startNodePrefs();
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
     }
 
     private void openWallet(String name, boolean streetmode) {
@@ -298,7 +321,7 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
 
     private boolean isFabOpen = false;
     private FloatingActionButton fab, fabNew, fabView, fabKey, fabSeed, fabImport, fabLedger;
-    private RelativeLayout fabScreen;
+    private RelativeLayout fabScreen, fabBackground;
     private RelativeLayout fabNewL, fabViewL, fabKeyL, fabSeedL, fabImportL, fabLedgerL;
     private Animation fab_open, fab_close, rotate_forward, rotate_backward, fab_open_screen, fab_close_screen;
     private Animation fab_pulse;
@@ -309,8 +332,10 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
 
     public void animateFAB() {
         if (isFabOpen) { // close the fab
+            fabBackground.setClickable(false);
             fabScreen.setClickable(false);
             fabScreen.startAnimation(fab_close_screen);
+            fabBackground.startAnimation(fab_close_screen);
             fab.startAnimation(rotate_backward);
             if (fabLedgerL.getVisibility() == View.VISIBLE) {
                 fabLedgerL.startAnimation(fab_close);
@@ -329,8 +354,10 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
             }
             isFabOpen = false;
         } else { // open the fab
+            fabBackground.setClickable(true);
             fabScreen.setClickable(true);
             fabScreen.startAnimation(fab_open_screen);
+            fabBackground.startAnimation(fab_open_screen);
             fab.startAnimation(rotate_forward);
             if (activityCallback.hasLedger()) {
                 fabLedgerL.setVisibility(View.VISIBLE);
@@ -373,6 +400,7 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
             animateFAB();
         } else if (id == R.id.fabNew) {
             fabScreen.setVisibility(View.INVISIBLE);
+            fabBackground.setVisibility(View.INVISIBLE);
             isFabOpen = false;
             activityCallback.onAddWallet(GenerateFragment.TYPE_NEW);
         } else if (id == R.id.fabView) {
@@ -512,9 +540,8 @@ public class LoginFragment extends Fragment implements WalletInfoAdapter.OnInter
         } else if (status == NetCipherHelper.Status.NOT_ENABLED) {
             Toast.makeText(getActivity(), getString(R.string.tor_enable_background), Toast.LENGTH_LONG).show();
         } else {
-            pbNetwork.setVisibility(View.VISIBLE);
-            ibNetwork.setEnabled(false);
-            NetCipherHelper.getInstance().toggle();
+            Timber.d("changeTorIconColor: activity is null.");
+            // log but ignore as it's not important
         }
     }
 

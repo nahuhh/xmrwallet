@@ -32,16 +32,16 @@
     <!-- CLASSIC -->
     <color name="classic_textColorPrimary">#0C080C</color>
     <color name="classic_textColorSecondary">#392F39</color>
-    <color name="classic_statusBarColor">@color/classic_gradientTopColor</color>
-    <color name="classic_gradientTopColor">#FF6105</color>
-    <color name="classic_gradientBottomColor">#FF006B</color>
+    <color name="classic_statusBarColor">#ff6600</color>
+    <color name="classic_gradientTopColor">@color/classic_statusBarColor</color>
+    <color name="classic_gradientBottomColor">@color/classic_statusBarColor</color>
     <color name="classic_streetColorA">#D81F0759</color>
     <color name="classic_streetColorB">#D819001E</color>
     <color name="classic_toolbarTextColor">#FFF6EF</color>
     <color name="classic_favouriteColor">@color/classic_gradientBottomColor</color>
-    <color name="classic_softFavouriteColor">@color/classic_gradientBottomColor</color>
+    <color name="classic_softFavouriteColor">#ACACAC</color>
     <color name="classic_positiveColor">#00C691</color>
-    <color name="classic_negativeColor">@color/classic_gradientBottomColor</color>
+    <color name="classic_negativeColor">#B31A1A</color>
     <color name="classic_neutralColor">@color/classic_positiveColor</color>
     <color name="classic_noticeColor">#1f4e97</color>
     <color name="classic_navigationBarColor">@color/classic_colorOnBackground</color>

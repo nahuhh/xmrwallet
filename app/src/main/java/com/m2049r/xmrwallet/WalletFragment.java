@@ -206,7 +206,7 @@ public class WalletFragment extends Fragment
     }
 
     void showBalance(String balance) {
-        tvBalance.setText(balance);
+        tvBalance.setText(getResources().getString(R.string.xmr_confirmed_amount, balance));
         final boolean streetMode = activityCallback.isStreetMode();
         if (!streetMode) {
             llBalance.setVisibility(View.VISIBLE);
@@ -385,10 +385,8 @@ public class WalletFragment extends Fragment
     }
 
     private void showReceive() {
-        if (walletLoaded) {
             bReceive.setVisibility(View.VISIBLE);
             bReceive.setEnabled(true);
-        }
     }
 
     private String syncText = null;

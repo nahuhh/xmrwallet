@@ -33,6 +33,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.Proxy;
+import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -381,5 +382,14 @@ public class NetCipherHelper implements StatusCallback {
 
     public void installOrbot(Activity host) {
         host.startActivity(OrbotHelper.getOrbotInstallIntent(context));
+    }
+
+    public static boolean isTorRunning() {
+        try {
+            new ServerSocket(9050).close();
+            return false;
+        } catch(IOException e) {
+            return true;
+        }
     }
 }
