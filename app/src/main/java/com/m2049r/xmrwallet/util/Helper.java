@@ -333,8 +333,8 @@ public class Helper {
             WalletManager.setLogLevel(level);
     }
 
-    static public boolean useCrazyPass(Context context) {
-        File flagFile = new File(getWalletRoot(context), NOCRAZYPASS_FLAGFILE);
+    static public boolean useCrazyPass(Context context, String walletName) {
+        File flagFile = new File(getWalletRoot(context), walletName+NOCRAZYPASS_FLAGFILE);
         return !flagFile.exists();
     }
 
@@ -358,7 +358,7 @@ public class Helper {
         }
 
         // generate & try with CrAzYpass
-        String crazyPass = KeyStoreHelper.getCrazyPass(context, password);
+        String crazyPass = KeyStoreHelper.getCrazyPass(context, password, walletName);
         if (WalletManager.getInstance().verifyWalletPasswordOnly(walletPath, crazyPass)) {
             return crazyPass;
         }
