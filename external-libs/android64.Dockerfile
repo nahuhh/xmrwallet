@@ -21,13 +21,10 @@ ENV PREFIX=${WORKDIR}/prefix
 ENV TOOLCHAIN_DIR=${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/linux-x86_64
 
 RUN set -x && apt-get update \
-    && apt-get install -y ant automake build-essential file gettext git libc6 libncurses5 \
-    libssl-dev libstdc++6 libtinfo5 libtool libz1 pkg-config python3 \
-    unzip curl wget
+    && apt-get install -y ant automake build-essential ca-certificates-java file gettext git libc6 libncurses5 \
+    libssl-dev libstdc++6 libtinfo5 libtool libz1 openjdk-8-jdk-headless openjdk-8-jre-headless pkg-config python3 \
+    unzip wget
 
-# RUN set -x && apt-get update && apt-get install -y unzip automake build-essential curl file pkg-config git python libtool libtinfo5
-
-WORKDIR /opt/android
 ## INSTALL ANDROID SDK
 RUN set -x \
     && curl -s -O https://dl.google.com/android/repository/sdk-tools-linux-${ANDROID_SDK_REVISION}.zip \
@@ -50,7 +47,7 @@ ENV PATH=${TOOLCHAIN_DIR}/aarch64-linux-android/bin:${TOOLCHAIN_DIR}/bin:${PATH}
 ENV ZLIB_VERSION 1.2.12
 ENV ZLIB_HASH 91844808532e5ce316b3c010929493c0244f3d37593afd6de04f71821d5136d9
 RUN set -x \
-    && curl -s -O https://zlib.net/zlib-${ZLIB_VERSION}.tar.gz \
+    && wget -q https://zlib.net/zlib-${ZLIB_VERSION}.tar.gz \
     && tar -xzf zlib-${ZLIB_VERSION}.tar.gz \
     && rm zlib-${ZLIB_VERSION}.tar.gz \
     && cd zlib-${ZLIB_VERSION} \
@@ -77,15 +74,12 @@ ARG BOOST_VERSION=1_74_0
 ARG BOOST_VERSION_DOT=1.74.0
 ARG BOOST_HASH=83bfc1507731a0906e387fc28b7ef5417d591429e51e788417fe9ff025e116b1
 RUN set -x \
-    && curl -s -L -o  boost_${BOOST_VERSION}.tar.bz2 https://downloads.sourceforge.net/project/boost/boost/${BOOST_VERSION_DOT}/boost_${BOOST_VERSION}.tar.bz2 \
+    && wget -q boost_${BOOST_VERSION}.tar.bz2 https://downloads.sourceforge.net/project/boost/boost/${BOOST_VERSION_DOT}/boost_${BOOST_VERSION}.tar.bz2 \
     && echo "${BOOST_HASH}  boost_${BOOST_VERSION}.tar.bz2" | sha256sum -c \
     && tar -xvf boost_${BOOST_VERSION}.tar.bz2 \
     && rm -f boost_${BOOST_VERSION}.tar.bz2 \
     && cd boost_${BOOST_VERSION} \
-    && ./bootstrap.sh --prefix=${PREFIX}
-
-## Build BOOST
-RUN set -x \
+    && PATH=${HOST_PATH ./bootstrap.sh --prefix=${PREFIX}
     && PATH=${TOOLCHAIN_DIR}/bin:${HOST_PATH} ./b2 --build-type=minimal link=static runtime-link=static \
     --with-chrono --with-date_time --with-filesystem --with-program_options --with-regex --with-serialization \
     --with-system --with-thread --with-locale --build-dir=android --stagedir=android toolset=clang threading=multi \
@@ -152,10 +146,6 @@ RUN set -x \
     && PATH=${HOST_PATH} make -j${THREADS} \
     && PATH=${HOST_PATH} make -j${THREADS} install \
     && rm -rf $(pwd)
-
-
-ENV HOST_PATH $PATH
-ENV PATH $TOOLCHAIN_DIR/aarch64-linux-android/bin:$TOOLCHAIN_DIR/bin:$PATH
 
 COPY . /src
 ARG NPROC=4
