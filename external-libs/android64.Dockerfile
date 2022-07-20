@@ -79,7 +79,7 @@ RUN set -x \
     && tar -xvf boost_${BOOST_VERSION}.tar.bz2 \
     && rm -f boost_${BOOST_VERSION}.tar.bz2 \
     && cd boost_${BOOST_VERSION} \
-    && PATH=${HOST_PATH ./bootstrap.sh --prefix=${PREFIX}
+    && PATH=${HOST_PATH ./bootstrap.sh --prefix=${PREFIX} \
     && PATH=${TOOLCHAIN_DIR}/bin:${HOST_PATH} ./b2 --build-type=minimal link=static runtime-link=static \
     --with-chrono --with-date_time --with-filesystem --with-program_options --with-regex --with-serialization \
     --with-system --with-thread --with-locale --build-dir=android --stagedir=android toolset=clang threading=multi \
