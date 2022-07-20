@@ -147,16 +147,56 @@ RUN set -x \
     && PATH=${HOST_PATH} make -j${THREADS} install \
     && rm -rf $(pwd)
 
+ARG EXPAT_VERSION=2.4.1
+ARG EXPAT_HASH=2f9b6a580b94577b150a7d5617ad4643a4301a6616ff459307df3e225bcfbf40
+RUN wget https://github.com/libexpat/libexpat/releases/download/R_2_4_1/expat-${EXPAT_VERSION}.tar.bz2 && \
+    echo "${EXPAT_HASH}  expat-${EXPAT_VERSION}.tar.bz2" | sha256sum -c && \
+    tar -xf expat-${EXPAT_VERSION}.tar.bz2 && \
+    rm expat-${EXPAT_VERSION}.tar.bz2 && \
+    cd expat-${EXPAT_VERSION} && \
+    CC=${ANDROID_CLANG} CXX=${ANDROID_CLANGPP} ./configure --enable-static --disable-shared --prefix=${PREFIX} --host=aarch64-linux-android && \
+    make -j$THREADS && \
+    make -j$THREADS install && \
+    rm -rf $(pwd)
+
+ARG UNBOUND_VERSION=1.13.2
+ARG UNBOUND_HASH=0a13b547f3b92a026b5ebd0423f54c991e5718037fd9f72445817f6a040e1a83
+RUN wget https://www.nlnetlabs.nl/downloads/unbound/unbound-${UNBOUND_VERSION}.tar.gz && \
+    echo "${UNBOUND_HASH}  unbound-${UNBOUND_VERSION}.tar.gz" | sha256sum -c && \
+    tar -xzf unbound-${UNBOUND_VERSION}.tar.gz && \
+    rm unbound-${UNBOUND_VERSION}.tar.gz && \
+    cd unbound-${UNBOUND_VERSION} && \
+    CC=${ANDROID_CLANG} CXX=${ANDROID_CLANGPP} ./configure --disable-shared --enable-static --without-pyunbound --with-libexpat=${PREFIX} --with-ssl=${PREFIX} --with-libevent=no --without-pythonmodule --disable-flto --with-pthreads --with-libunbound-only --host=aarch64-linux-android --with-pic --prefix=${PREFIX} && \
+    make -j$THREADS && \
+    make -j$THREADS install && \
+    rm -rf $(pwd)
+
 COPY . /src
 ARG NPROC=4
 RUN set -x \
     && cd /src \
-    && CMAKE_INCLUDE_PATH="${PREFIX}/include" \
-       CMAKE_LIBRARY_PATH="${PREFIX}/lib" \
-       ANDROID_STANDALONE_TOOLCHAIN_PATH=${TOOLCHAIN_DIR} \
-       USE_SINGLE_BUILDDIR=1 \
-       PATH=${HOST_PATH} make release-static-android-armv8-wallet_api -j${NPROC}
+&& mkdir -p build/release && cd build/release \
+#    && CMAKE_INCLUDE_PATH="${PREFIX}/include" \
+  #     CMAKE_LIBRARY_PATH="${PREFIX}/lib" \
+      && cmake \
+    -DCMAKE_TOOLCHAIN_FILE="${ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake" \
+    -DCMAKE_PREFIX_PATH="${PREFIX}" \
+    -DCMAKE_FIND_ROOT_PATH="${PREFIX}" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DARCH="armv8-a" \
+    -DANDROID_NATIVE_API_LEVEL=${ANDROID_NATIVE_API_LEVEL} \
+    -DANDROID_ABI="arm64-v8a" \
+    -DANDROID_TOOLCHAIN=clang \
+    -DBoost_USE_STATIC_RUNTIME=ON \
+    -DLRELEASE_PATH="${PREFIX}/bin" \
+    -DWITH_SCANNER=ON \
+-DUSE_SINGLE_BUILDDIR=1 \
+    -DCMAKE_INCLUDE_PATH="${PREFIX}/include" \
+    -DCMAKE_LIBRARY_PATH="${PREFIX}/lib" ../..
+ARG       ANDROID_STANDALONE_TOOLCHAIN_PATH=${TOOLCHAIN_DIR} 
+#       USE_SINGLE_BUILDDIR=1 \
+ARG       PATH=${HOST_PATH} make release-static-android-armv8-wallet_api -j${NPROC} 
 
 RUN set -x \
-    && cd /src/build/release \
+#    && cd /src/build/release \
     && find . -path ./lib -prune -o -name '*.a' -exec cp '{}' lib \;
