@@ -225,7 +225,7 @@ COPY . /src
 ARG NPROC=4
 RUN set -x \
     && cd /src \ 
-&& mkdir build/release && cd build/release \
+&& mkdir -p build/release && cd build/release \
 && CC=${ANDROID_CLANG} CXX=${ANDROID_CLANGPP} cmake -DCMAKE_TOOLCHAIN_FILE="${ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake" \
     -DCMAKE_PREFIX_PATH="${PREFIX}" \
     -DCMAKE_FIND_ROOT_PATH="${PREFIX}" \
