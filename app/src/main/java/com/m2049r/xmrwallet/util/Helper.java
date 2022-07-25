@@ -604,6 +604,6 @@ public class Helper {
     }
 
     static public boolean preventScreenshot() {
-        return !(BuildConfig.DEBUG || BuildConfig.FLAVOR_type.equals("alpha") || BuildConfig.FLAVOR_type.equals("stagenet") || BuildConfig.FLAVOR_type.equals("mainnet"));
+        return !(BuildConfig.DEBUG || BuildConfig.FLAVOR_type.equals("alpha") || BuildConfig.FLAVOR_type.equals("stagenet") || BuildConfig.FLAVOR_type.equals("prod"));
     }
 }
