@@ -210,13 +210,12 @@ public class NodeInfo extends Node {
     private boolean testRpcService(int port) {
         Timber.d("Testing %s", toNodeString());
         clear();
-        if (hostAddress.isOnion() && !NetCipherHelper.isTor()) {
+        if (hostAddress.isOnion()) {
             tested = true; // sortof
             responseCode = 418; // I'm a teapot - or I need an Onion - who knows
             return false; // autofail
         }
-
-        long triesLeft = 5;
+        long triesLeft = 3;
         while (triesLeft > 0) {
             try {
                 long ta = System.nanoTime();
@@ -253,6 +252,8 @@ public class NodeInfo extends Node {
             } finally{
                 tested = true;
             }
+        }
+
         return false;
     }
 
