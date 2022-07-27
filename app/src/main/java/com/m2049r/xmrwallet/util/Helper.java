@@ -604,32 +604,5 @@ public class Helper {
     }
 
     static public boolean preventScreenshot() {
-        return !(BuildConfig.DEBUG || BuildConfig.FLAVOR_type.equals("alpha"));
+        return !(BuildConfig.DEBUG || BuildConfig.FLAVOR_type.equals("alpha") || BuildConfig.FLAVOR_type.equals("prod"));
     }
-
-    static public final int STALE_NODE_HOURS = 2;
-
-    static public void showTimeDifference(TextView view, long timeInSeconds) {
-        final Context ctx = view.getContext();
-        final long now = Calendar.getInstance().getTimeInMillis() / 1000;
-        final long secs = (now - timeInSeconds);
-        final long mins = secs / 60; // in minutes
-        final long hours = mins / 60;
-        final long days = hours / 24;
-        String msg;
-        if (mins < 2) {
-            msg = ctx.getString(R.string.node_updated_now, secs);
-        } else if (hours < 2) {
-            msg = ctx.getString(R.string.node_updated_mins, mins);
-        } else if (days < 2) {
-            msg = ctx.getString(R.string.node_updated_hours, hours);
-        } else {
-            msg = ctx.getString(R.string.node_updated_days, days);
-        }
-        view.setText(msg);
-        if (hours >= STALE_NODE_HOURS)
-            view.setTextColor(ThemeHelper.getThemedColor(view.getContext(), R.attr.colorError));
-        else
-            view.setTextColor(ThemeHelper.getThemedColor(view.getContext(), android.R.attr.textColorPrimary));
-    }
-}
