@@ -30,7 +30,7 @@ import timber.log.Timber;
 
 public class NodePinger {
     static final public int NUM_THREADS = 10;
-    static final public long MAX_TIME = 5L; // seconds
+    static final public long MAX_TIME = 30L; // seconds
 
     public interface Listener {
         void publish(NodeInfo node);
