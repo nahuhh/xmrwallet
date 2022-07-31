@@ -210,20 +210,15 @@ public class NodeInfo extends Node {
     private boolean testRpcService(int port) {
         Timber.d("Testing %s", toNodeString());
         clear();
-        if (hostAddress.isOnion() && !NetCipherHelper.isTor()) {
-            tested = true; // sortof
-            responseCode = 418; // I'm a teapot - or I need an Onion - who knows
-            return false; // autofail
-        }
         try {
             long ta = System.nanoTime();
             try (Response response = rpcServiceRequest(port).execute()) {
                 Timber.d("%s: %s", response.code(), response.request().url());
-                responseTime = (System.nanoTime() - ta) / 1000000.0;
+                responseTime = (System.nanoTime() - ta) / 10000000.0;
                 responseCode = response.code();
                 if (response.isSuccessful()) {
                     ResponseBody respBody = response.body(); // closed through Response object
-                    if ((respBody != null) && (respBody.contentLength() < 2000)) { // sanity check
+                    if ((respBody != null) && (respBody.contentLength() < 5000)) { // sanity check
                         final JSONObject json = new JSONObject(respBody.string());
                         String rpcVersion = json.getString("jsonrpc");
                         if (!RPC_VERSION.equals(rpcVersion))

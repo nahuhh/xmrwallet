@@ -23,7 +23,7 @@ import android.os.AsyncTask;
 import com.m2049r.xmrwallet.data.BarcodeData;
 import com.m2049r.xmrwallet.data.Crypto;
 
-import org.jitsi.dnssec.validator.ValidatingResolver;
+import org.xbill.DNS.dnssec.ValidatingResolver;
 import org.xbill.DNS.DClass;
 import org.xbill.DNS.Flags;
 import org.xbill.DNS.Message;

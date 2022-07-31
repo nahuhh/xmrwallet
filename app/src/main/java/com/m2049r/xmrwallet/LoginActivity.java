@@ -1442,9 +1442,14 @@ public class LoginActivity extends BaseActivity
 
             @Override
             public void notInstalled() {
-                Timber.d("NOT INSTALLED");
-                WalletManager.getInstance().setProxy("");
+                Timber.d("CONNECTED");
+                WalletManager.getInstance().setProxy(NetCipherHelper.getProxy());
                 torNotify();
+                if (waitingUiTask != null) {
+                    Timber.d("RUN");
+                    runOnUiThread(waitingUiTask);
+                    waitingUiTask = null;
+                }
             }
 
             @Override

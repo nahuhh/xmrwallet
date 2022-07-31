@@ -198,16 +198,6 @@ public class NodeInfoAdapter extends RecyclerView.Adapter<NodeInfoAdapter.ViewHo
                 int position = getAdapterPosition(); // gets item position
                 if (position != RecyclerView.NO_POSITION) { // Check if an item was deleted, but the user clicked it before the UI removed it
                     final NodeInfo node = nodeItems.get(position);
-                    if (node.isOnion()) {
-                        switch (NetCipherHelper.getStatus()) {
-                            case NOT_INSTALLED:
-                                HelpFragment.display(activity.getSupportFragmentManager(), R.string.help_tor);
-                                return;
-                            case DISABLED:
-                                HelpFragment.display(activity.getSupportFragmentManager(), R.string.help_tor_enable);
-                                return;
-                        }
-                    }
                     node.setSelecting(true);
                     allowClick(false);
                     listener.onInteraction(view, node);

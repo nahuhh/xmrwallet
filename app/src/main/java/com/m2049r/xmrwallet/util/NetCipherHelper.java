@@ -56,9 +56,9 @@ import timber.log.Timber;
 @RequiredArgsConstructor
 public class NetCipherHelper implements StatusCallback {
     public static final String USER_AGENT = "Monerujo/1.0";
-    public static final int HTTP_TIMEOUT = 1000; //ms
-    public static final int TOR_TIMEOUT_CONNECT = 5000; //ms
-    public static final int TOR_TIMEOUT = 2000; //ms
+    public static final int HTTP_TIMEOUT = 5000; //ms
+    public static final int TOR_TIMEOUT_CONNECT = 10000; //ms
+    public static final int TOR_TIMEOUT = 5000; //ms
 
     public interface OnStatusChangedListener {
         void connected();
@@ -136,14 +136,6 @@ public class NetCipherHelper implements StatusCallback {
     public static void register(OnStatusChangedListener listener) {
         final NetCipherHelper me = getInstance();
         me.onStatusChangedListener = listener;
-
-        // NOT_INSTALLED is dealt with through the callbacks
-        me.orbot.removeStatusCallback(me) // make sure we are registered just once
-                .addStatusCallback(me);
-
-        // deal with  org.torproject.android.intent.action.STATUS = STARTS_DISABLED
-        me.context.registerReceiver(orbotStatusReceiver, new IntentFilter(OrbotHelper.ACTION_STATUS));
-
         me.startTor();
     }
 
